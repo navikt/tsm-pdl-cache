@@ -1,0 +1,45 @@
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: tsm-pdl-cache
+  namespace: tsm
+  labels:
+    team: tsm
+    system: mottak
+spec:
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_17
+        databases:
+          - name: tsm-pdl-cache
+        diskAutoresize: true
+        highAvailability: false
+        diskType: SSD
+        insights:
+          enabled: true
+        flags:
+          - name: cloudsql.logical_decoding
+            value: "on"
+        tier: db-custom-1-3840
+  image: {{image}}
+  replicas:
+    min: 1
+    max: 1
+  port: 8080
+  liveness:
+    /internal/health
+  readiness:
+    /internal/health
+  startup:
+    /internal/health
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+  kafka:
+    pool: nav-prod
