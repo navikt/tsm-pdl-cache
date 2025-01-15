@@ -12,6 +12,7 @@ spec:
       - type: POSTGRES_17
         databases:
           - name: tsm-pdl-cache
+            envVarPrefix: DB
         diskAutoresize: true
         highAvailability: false
         diskType: SSD
@@ -27,11 +28,11 @@ spec:
     max: 1
   port: 8080
   liveness:
-    /internal/health
+    path: /internal/health
   readiness:
-    /internal/health
+    path: /internal/health
   startup:
-    /internal/health
+    path: /internal/health
   prometheus:
     enabled: true
     path: /internal/prometheus

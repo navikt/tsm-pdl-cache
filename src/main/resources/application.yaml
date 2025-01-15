@@ -1,0 +1,17 @@
+spring:
+    datasource:
+        url: "${DB_JDBC_URL}"
+        username: ${db.username}
+        password: ${db.password}
+management:
+    endpoint:
+        health.probes.enabled: true
+        health.show-details: always
+        prometheus:
+            access: read_only
+    endpoints.web:
+        base-path: "/internal"
+        exposure.include: health, prometheus
+    health:
+        livenessstate.enabled: true
+        readinessState.enabled: true
