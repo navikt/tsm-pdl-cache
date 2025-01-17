@@ -1,6 +1,6 @@
 plugins {
-	kotlin("jvm") version "1.9.25"
-	kotlin("plugin.spring") version "1.9.25"
+	kotlin("jvm") version "2.1.0"
+	kotlin("plugin.spring") version "2.1.0"
 	id("org.springframework.boot") version "3.4.1"
 	id("io.spring.dependency-management") version "1.1.7"
 }
@@ -17,7 +17,7 @@ java {
 repositories {
 	mavenCentral()
 }
-val logbackVersion = "1.5.11"
+val logbackVersion = "1.5.16"
 val logbackEncoderVersion = "8.0"
 
 dependencies {
