@@ -19,6 +19,7 @@ repositories {
 }
 val logbackVersion = "1.5.16"
 val logbackEncoderVersion = "8.0"
+val flywayVersion= "10.20.0"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
@@ -31,6 +32,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springframework.kafka:spring-kafka")
+	implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
+	implementation("org.flywaydb:flyway-core:$flywayVersion")
 	implementation("net.logstash.logback:logstash-logback-encoder:${logbackEncoderVersion}")
 	implementation("ch.qos.logback:logback-classic:$logbackVersion")
 	runtimeOnly("org.postgresql:postgresql")

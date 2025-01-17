@@ -8,6 +8,7 @@ import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.kafka.KafkaContainer
 import org.testcontainers.utility.DockerImageName
 
+
 @TestConfiguration(proxyBeanMethods = false)
 class TestcontainersConfiguration {
 
@@ -20,7 +21,8 @@ class TestcontainersConfiguration {
 	@Bean
 	@ServiceConnection
 	fun postgresContainer(): PostgreSQLContainer<*> {
-		return PostgreSQLContainer(DockerImageName.parse("postgres:latest"))
+		return PostgreSQLContainer(DockerImageName.parse("postgres:17"))
 			.waitingFor(Wait.forListeningPort())
 	}
+
 }
