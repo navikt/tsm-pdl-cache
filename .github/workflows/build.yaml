@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    uses: navikt/teamsykmelding-github-actions-workflows/.github/workflows/kotlin-app-21.yaml@feat/kotlin-app
+    uses: navikt/teamsykmelding-github-actions-workflows/.github/workflows/gradle-21.yaml@feat/kotlin-app
     secrets: inherit
     with:
       app: 'tsm-pdl-cache'
