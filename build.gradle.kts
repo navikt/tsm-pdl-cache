@@ -19,7 +19,7 @@ repositories {
 }
 val logbackVersion = "1.5.16"
 val logbackEncoderVersion = "8.0"
-val flywayVersion= "10.20.0"
+val flywayVersion= "11.2.0"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
