@@ -1,13 +1,11 @@
 package no.nav.tsm.pdl.cache.pdl
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.tsm.pdl.cache.util.objectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
-import kotlin.math.log
 
 @Service
 class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {

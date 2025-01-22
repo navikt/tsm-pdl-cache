@@ -2,32 +2,46 @@ package no.nav.tsm.pdl.cache.pdl
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PdlPersonService(val personRepository: PersonRepository) {
 
     private val logger = LoggerFactory.getLogger(PdlPersonService::class.java)
 
+    @Transactional
     fun updatePerson(aktorId: String, person: Person?) {
         if(person == null) {
-            return deletePerson(aktorId)
+            personRepository.deletePersons(listOf(aktorId))
+            return
         }
-        val personWithIdents = personRepository.hentPerson(person.hentIdenter.map { it.ident })
-        if(personWithIdents.isEmpty()) {
-            logger.info("Fant ikke person i PDL for aktor $aktorId")
-            return personRepository.insertPerson(aktorId, person)
+        val aktorIds = personRepository.getAktorIds(person.hentIdenter.map { it.ident })
+        if(aktorIds.isNotEmpty()) {
+            personRepository.deletePersons(aktorIds)
         }
-
+        personRepository.insertPerson(aktorId, person)
     }
 
-    private fun deletePerson(aktorId: String) {
-        logger.info("Deleting person for aktor_id=$aktorId")
-        val result = personRepository.deletePerson(aktorId)
-        logger.info("Deleted $result person")
-        val left = personRepository.hentPerson(listOf(aktorId))
-        if (left.isEmpty()) {
-            logger.error("Person with aktor_id=$aktorId should not be found")
-            throw IllegalStateException("Person with aktor_id=$aktorId should not be found")
+    private fun mapToPersons(list: List<PersnDbResult>) : List<Person> {
+        return list.groupBy {
+            it.aktorId
+        }.map {
+            val aktorIdIdent = it.value.find { ident -> ident.ident == it.key && ident.gruppe == IDENT_GRUPPE.AKTOR_ID && !ident.historisk }
+            if (aktorIdIdent == null) {
+                throw IllegalStateException("Fant ikke aktorId i PDL")
+            }
+            Person(
+                navn = aktorIdIdent.navn,
+                fodselsdato = aktorIdIdent.fodselsdato,
+                hentIdenter = it.value.map { ident ->
+                    Ident(
+                        ident = ident.ident,
+                        gruppe = ident.gruppe,
+                        historisk = ident.historisk
+                    )
+                }
+            )
         }
+
     }
 }

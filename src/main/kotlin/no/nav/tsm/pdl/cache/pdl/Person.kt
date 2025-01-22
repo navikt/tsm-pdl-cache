@@ -18,8 +18,10 @@ data class Navn(
     val etternavn: String,
 )
 
-class Person(
+data class Person(
     val navn: Navn,
     val fodselsdato: LocalDate,
     val hentIdenter: List<Ident>
 )
+
+fun Person.getAktorId() = hentIdenter.single { it.gruppe == IDENT_GRUPPE.AKTOR_ID && !it.historisk }.ident

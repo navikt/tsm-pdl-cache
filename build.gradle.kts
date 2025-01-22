@@ -36,7 +36,7 @@ dependencies {
 	implementation("org.flywaydb:flyway-core:$flywayVersion")
 	implementation("net.logstash.logback:logstash-logback-encoder:${logbackEncoderVersion}")
 	implementation("ch.qos.logback:logback-classic:$logbackVersion")
-	runtimeOnly("org.postgresql:postgresql")
+	implementation("org.postgresql:postgresql")
 	runtimeOnly("io.micrometer:micrometer-registry-otlp")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
