@@ -20,8 +20,25 @@ data class Navn(
 
 data class Person(
     val navn: Navn,
-    val fodselsdato: LocalDate,
+    val foedselsdato: LocalDate,
+    val identer: List<Ident>
+)
+
+data class PdlNavn(
+    val fornavn: String,
+    val mellomnavn: String?,
+    val etternavn: String,
+    val historisk: Boolean,
+)
+data class PdlPerson(
+    val foedsel: List<Foedsel>,
+    val navn: List<PdlNavn>,
     val hentIdenter: List<Ident>
 )
 
-fun Person.getAktorId() = hentIdenter.single { it.gruppe == IDENT_GRUPPE.AKTOR_ID && !it.historisk }.ident
+data class Foedsel(
+    val foedselsdato: LocalDate,
+    val historisk: Boolean
+)
+
+fun Person.getAktorId() = identer.single { it.gruppe == IDENT_GRUPPE.AKTOR_ID && !it.historisk }.ident

@@ -28,7 +28,7 @@ class PdlPersonServiceTest() {
                 mellomnavn = "Mellomnavn",
                 etternavn = "Etternavn",
             ), LocalDate.of(1991, 1, 1),
-            hentIdenter = listOf(
+            identer = listOf(
                 Ident(
                     ident = aktorId,
                     IDENT_GRUPPE.AKTOR_ID,
@@ -50,7 +50,7 @@ class PdlPersonServiceTest() {
         )
 
         personService.updatePerson(person.getAktorId(), person)
-        val identer = personRepository.hentPerson(person.hentIdenter.map { it.ident })
+        val identer = personRepository.hentPerson(person.identer.map { it.ident })
         assertThat(identer).hasSize(2)
     }
 
@@ -74,7 +74,7 @@ class PdlPersonServiceTest() {
         val (person1, person2, person3) = setUpTest()
 
         var person4 = person1.copy(
-            hentIdenter = listOf(Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
+            identer = listOf(Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
                 Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
                 Ident("FNR3", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
                 Ident(person1.getAktorId(), IDENT_GRUPPE.AKTOR_ID, true),
@@ -161,7 +161,7 @@ private fun person(identer: List<Ident> = listOf()): Person {
             mellomnavn = "Mellomnavn",
             etternavn = "Etternavn",
         ), LocalDate.of(1991, 1, 1),
-        hentIdenter = listOf(
+        identer = listOf(
             Ident(
                 ident = UUID.randomUUID().toString(),
                 IDENT_GRUPPE.AKTOR_ID,

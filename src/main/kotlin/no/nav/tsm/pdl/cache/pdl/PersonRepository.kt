@@ -70,10 +70,10 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
                 type = "jsonb"
                 value = objectMapper.writeValueAsString(person.navn)
             },
-            "fodselsdato" to person.fodselsdato
+            "fodselsdato" to person.foedselsdato
         ))
         val identInserts = "INSERT INTO identer(ident, aktor_id, gruppe, historisk) VALUES(:ident, :aktorId, :gruppe, :historisk)"
-        val identInsertsResult = sqlTemplate.batchUpdate(identInserts, person.hentIdenter.map {
+        val identInsertsResult = sqlTemplate.batchUpdate(identInserts, person.identer.map {
             mapOf(
                 "ident" to it.ident,
                 "aktorId" to aktorId,
