@@ -33,7 +33,11 @@ data class PdlNavn(
 data class PdlPerson(
     val foedsel: List<Foedsel>,
     val navn: List<PdlNavn>,
-    val hentIdenter: List<Ident>
+    val hentIdenter: HentIdenter
+)
+
+data class HentIdenter(
+    val identer: List<Ident>
 )
 
 data class Foedsel(

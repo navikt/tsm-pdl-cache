@@ -27,7 +27,7 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
                         )
                     },
                     foedselsdato = pdlPerson.foedsel.single { !it.historisk }.foedselsdato,
-                    identer = pdlPerson.hentIdenter
+                    identer = pdlPerson.hentIdenter.identer
                 )
             }
         pdlPersonService.updatePerson(aktorId, person)
