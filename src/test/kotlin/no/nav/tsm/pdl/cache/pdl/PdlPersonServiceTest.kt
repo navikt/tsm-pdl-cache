@@ -19,6 +19,15 @@ class PdlPersonServiceTest() {
     private lateinit var personService: PdlPersonService
 
     @Autowired private lateinit var personRepository: PersonRepository
+
+    @Test
+    fun savePersonWithoutName() {
+        val person = person().copy(navn = null)
+        personService.updatePerson(person.getAktorId(), person)
+        val personFromDb = personService.mapToPersons(personRepository.getPersons(listOf(person.getAktorId()))).first()
+        assertEquals(person, personFromDb)
+    }
+
     @Test
     fun saveNewPerson() {
         val aktorId = UUID.randomUUID().toString()
@@ -50,7 +59,7 @@ class PdlPersonServiceTest() {
         )
 
         personService.updatePerson(person.getAktorId(), person)
-        val identer = personRepository.hentPerson(person.identer.map { it.ident })
+        val identer = personRepository.getPersons(person.identer.map { it.ident })
         assertThat(identer).hasSize(2)
     }
 

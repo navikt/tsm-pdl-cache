@@ -20,7 +20,7 @@ data class Navn(
 )
 
 data class Person(
-    val navn: Navn,
+    val navn: Navn?,
     val foedselsdato: LocalDate,
     val identer: List<Ident>
 )

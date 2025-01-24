@@ -1,17 +1,15 @@
 package no.nav.tsm.pdl.cache.pdl
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.tsm.pdl.cache.util.objectMapper
 import org.postgresql.util.PGobject
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 class PersnDbResult(
-    val navn: Navn,
+    val navn: Navn?,
     val fodselsdato: LocalDate,
     val aktorId: String,
     val ident: String,
@@ -38,7 +36,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         }
     }
 
-    fun hentPerson(idents: List<String>): List<PersnDbResult> {
+    fun getPersons(idents: List<String>): List<PersnDbResult> {
         val sql = """
             SELECT 
             id.ident as ident,
@@ -52,7 +50,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         """
         val persons = sqlTemplate.query(sql, mapOf("idents" to idents)) { rs, _ ->
             PersnDbResult(
-                navn = rs.getString("navn").let { objectMapper.readValue<Navn>(it.toString()) },
+                navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it.toString()) },
                 fodselsdato = rs.getDate("fodselsdato").toLocalDate(),
                 aktorId = rs.getString("p_aktor_id"),
                 ident = rs.getString("ident"),
@@ -66,10 +64,10 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         val personInsert = "INSERT into person(aktor_id, navn, fodselsdato) VALUES(:aktorId, :navn, :fodselsdato)"
         sqlTemplate.update(personInsert, mapOf(
             "aktorId" to aktorId,
-            "navn" to PGobject().apply {
+            "navn" to person.navn?.let { PGobject().apply {
                 type = "jsonb"
                 value = objectMapper.writeValueAsString(person.navn)
-            },
+            } },
             "fodselsdato" to person.foedselsdato
         ))
         val identInserts = "INSERT INTO identer(ident, aktor_id, gruppe, historisk) VALUES(:ident, :aktorId, :gruppe, :historisk)"

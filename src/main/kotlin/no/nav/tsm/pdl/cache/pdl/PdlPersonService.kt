@@ -26,7 +26,7 @@ class PdlPersonService(val personRepository: PersonRepository) {
         personRepository.insertPerson(aktorId, person)
     }
 
-    private fun mapToPersons(list: List<PersnDbResult>) : List<Person> {
+    fun mapToPersons(list: List<PersnDbResult>) : List<Person> {
         return list.groupBy {
             it.aktorId
         }.map {
