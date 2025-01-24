@@ -30,7 +30,7 @@ class PdlPersonService(val personRepository: PersonRepository) {
         return list.groupBy {
             it.aktorId
         }.map {
-            val aktorIdIdent = it.value.find { ident -> ident.ident == it.key && ident.gruppe == IDENT_GRUPPE.AKTOR_ID && !ident.historisk }
+            val aktorIdIdent = it.value.find { ident -> ident.ident == it.key && ident.gruppe == IDENT_GRUPPE.AKTORID && !ident.historisk }
             if (aktorIdIdent == null) {
                 throw IllegalStateException("Fant ikke aktorId i PDL")
             }

@@ -31,7 +31,7 @@ class PdlPersonServiceTest() {
             identer = listOf(
                 Ident(
                     ident = aktorId,
-                    IDENT_GRUPPE.AKTOR_ID,
+                    IDENT_GRUPPE.AKTORID,
                     historisk = false
                 )
             )
@@ -44,7 +44,7 @@ class PdlPersonServiceTest() {
         val person = person(
             listOf(Ident(
                 ident = UUID.randomUUID().toString(),
-                IDENT_GRUPPE.AKTOR_ID,
+                IDENT_GRUPPE.AKTORID,
                 historisk = true
             ))
         )
@@ -61,7 +61,7 @@ class PdlPersonServiceTest() {
         val lastPerson = person(listOf(
             Ident(
                 ident = firstPerson.getAktorId(),
-                IDENT_GRUPPE.AKTOR_ID,
+                IDENT_GRUPPE.AKTORID,
                 historisk = true
             )
         ))
@@ -77,8 +77,8 @@ class PdlPersonServiceTest() {
             identer = listOf(Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
                 Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
                 Ident("FNR3", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
-                Ident(person1.getAktorId(), IDENT_GRUPPE.AKTOR_ID, true),
-                Ident(person2.getAktorId(), IDENT_GRUPPE.AKTOR_ID, false))
+                Ident(person1.getAktorId(), IDENT_GRUPPE.AKTORID, true),
+                Ident(person2.getAktorId(), IDENT_GRUPPE.AKTORID, false))
         )
 
         personService.updatePerson(person4.getAktorId(), person4)
@@ -164,7 +164,7 @@ private fun person(identer: List<Ident> = listOf()): Person {
         identer = listOf(
             Ident(
                 ident = UUID.randomUUID().toString(),
-                IDENT_GRUPPE.AKTOR_ID,
+                IDENT_GRUPPE.AKTORID,
                 historisk = false
             )
         ) + identer

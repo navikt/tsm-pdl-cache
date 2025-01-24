@@ -3,8 +3,9 @@ package no.nav.tsm.pdl.cache.pdl
 import java.time.LocalDate
 
 enum class IDENT_GRUPPE {
-    AKTOR_ID,
+    AKTORID,
     FOLKEREGISTERIDENT,
+    NPID,
 }
 
 data class Ident(
@@ -45,4 +46,4 @@ data class Foedsel(
     val historisk: Boolean
 )
 
-fun Person.getAktorId() = identer.single { it.gruppe == IDENT_GRUPPE.AKTOR_ID && !it.historisk }.ident
+fun Person.getAktorId() = identer.single { it.gruppe == IDENT_GRUPPE.AKTORID && !it.historisk }.ident
