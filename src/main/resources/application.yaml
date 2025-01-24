@@ -6,6 +6,7 @@ spring:
     flyway:
         enabled: true
     kafka:
+
         consumer:
             enable-auto-commit: true
             max-poll-records: 1
