@@ -25,13 +25,9 @@ spring:
             key-store-password: ${kafka.credstore.password}
 management:
     endpoint:
+        prometheus.enabled: true
         health.probes.enabled: true
         health.show-details: always
-        prometheus:
-            access: read_only
     endpoints.web:
-        base-path: "/internal"
-        exposure.include: health, prometheus
-    health:
-        livenessstate.enabled: true
-        readinessState.enabled: true
+        base-path: /internal
+        exposure.include: health,prometheus
