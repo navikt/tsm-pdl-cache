@@ -5,15 +5,29 @@ spring:
         password: ${db.password}
     flyway:
         enabled: true
+    kafka:
+
+        consumer:
+            enable-auto-commit: true
+            max-poll-records: 1
+            auto-offset-reset: earliest
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        bootstrap-servers: ${kafka.brokers}
+        security:
+            protocol: ssl
+        ssl:
+            trust-store-location: file:${kafka.truststore.path}
+            trust-store-type: JKS
+            trust-store-password: ${kafka.credstore.password}
+            key-store-location: file:${kafka.keystore.path}
+            key-store-type: PKCS12
+            key-store-password: ${kafka.credstore.password}
 management:
     endpoint:
+        prometheus.enabled: true
         health.probes.enabled: true
         health.show-details: always
-        prometheus:
-            access: read_only
     endpoints.web:
-        base-path: "/internal"
-        exposure.include: health, prometheus
-    health:
-        livenessstate.enabled: true
-        readinessState.enabled: true
+        base-path: /internal
+        exposure.include: health,prometheus
