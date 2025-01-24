@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 class PersnDbResult(
     val navn: Navn?,
-    val fodselsdato: LocalDate,
+    val fodselsdato: LocalDate?,
     val aktorId: String,
     val ident: String,
     val historisk: Boolean,
@@ -19,8 +19,6 @@ class PersnDbResult(
 
 @Repository
 class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
-
-    private val logger = LoggerFactory.getLogger(PersonRepository::class.java)
 
     fun deletePersons(aktorIds: List<String>): Int {
         val sql = """DELETE FROM person WHERE aktor_id in (:aktorIds)"""
@@ -51,7 +49,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         val persons = sqlTemplate.query(sql, mapOf("idents" to idents)) { rs, _ ->
             PersnDbResult(
                 navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it.toString()) },
-                fodselsdato = rs.getDate("fodselsdato").toLocalDate(),
+                fodselsdato = rs.getDate("fodselsdato")?.let { it.toLocalDate() },
                 aktorId = rs.getString("p_aktor_id"),
                 ident = rs.getString("ident"),
                 historisk = rs.getBoolean("historisk"),
@@ -79,8 +77,6 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
                 "historisk" to it.historisk
             )
         }.toTypedArray())
-
-        logger.info("Ferdig med $personInsert person til $identInsertsResult identer")
 
     }
 }

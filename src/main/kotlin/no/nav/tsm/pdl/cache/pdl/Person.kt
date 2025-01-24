@@ -21,7 +21,7 @@ data class Navn(
 
 data class Person(
     val navn: Navn?,
-    val foedselsdato: LocalDate,
+    val foedselsdato: LocalDate?,
     val identer: List<Ident>
 )
 
@@ -48,7 +48,7 @@ data class HentIdenter(
 )
 
 data class Foedsel(
-    val foedselsdato: LocalDate,
+    val foedselsdato: LocalDate?,
     val historisk: Boolean
 )
 

@@ -21,8 +21,8 @@ class PdlPersonServiceTest() {
     @Autowired private lateinit var personRepository: PersonRepository
 
     @Test
-    fun savePersonWithoutName() {
-        val person = person().copy(navn = null)
+    fun savePersonWithoutNameAndFoedsel() {
+        val person = person().copy(navn = null, foedselsdato = null)
         personService.updatePerson(person.getAktorId(), person)
         val personFromDb = personService.mapToPersons(personRepository.getPersons(listOf(person.getAktorId()))).first()
         assertEquals(person, personFromDb)

@@ -26,7 +26,7 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
                             etternavn = it.etternavn
                         )
                     },
-                    foedselsdato = pdlPerson.hentPerson.foedsel.single { !it.historisk }.foedselsdato,
+                    foedselsdato = pdlPerson.hentPerson.foedsel.singleOrNull { !it.historisk }?.foedselsdato,
                     identer = pdlPerson.hentIdenter.identer
                 )
             }
