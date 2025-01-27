@@ -1,7 +1,7 @@
 plugins {
-	kotlin("jvm") version "2.1.0"
-	kotlin("plugin.spring") version "2.1.0"
-	id("org.springframework.boot") version "3.4.1"
+	kotlin("jvm") version "2.1.10"
+	kotlin("plugin.spring") version "2.1.10"
+	id("org.springframework.boot") version "3.4.2"
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -19,7 +19,7 @@ repositories {
 }
 val logbackVersion = "1.5.16"
 val logbackEncoderVersion = "8.0"
-val flywayVersion= "10.20.0"
+val flywayVersion= "11.2.0"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
