@@ -69,7 +69,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
             "fodselsdato" to person.foedselsdato
         ))
         val identInserts = "INSERT INTO identer(ident, aktor_id, gruppe, historisk) VALUES(:ident, :aktorId, :gruppe, :historisk)"
-        val identInsertsResult = sqlTemplate.batchUpdate(identInserts, person.identer.map {
+        sqlTemplate.batchUpdate(identInserts, person.identer.map {
             mapOf(
                 "ident" to it.ident,
                 "aktorId" to aktorId,

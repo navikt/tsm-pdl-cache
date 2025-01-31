@@ -15,12 +15,8 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         return http.authorizeExchange { exchanges ->
-            exchanges
-                // Permit all paths under /internal/
-                .pathMatchers("/internal/**").permitAll()
-                // Everything else requires authentication
-                .anyExchange().authenticated()
-        }
-        .build()
+            exchanges.pathMatchers("/internal/**").permitAll()
+            .anyExchange().authenticated()
+        }.oauth2ResourceServer { oauth -> oauth.jwt {} }.build()
     }
 }

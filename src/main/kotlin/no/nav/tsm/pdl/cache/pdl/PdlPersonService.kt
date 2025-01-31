@@ -25,27 +25,4 @@ class PdlPersonService(val personRepository: PersonRepository) {
         }
         personRepository.insertPerson(aktorId, person)
     }
-
-    fun mapToPersons(list: List<PersnDbResult>) : List<Person> {
-        return list.groupBy {
-            it.aktorId
-        }.map {
-            val aktorIdIdent = it.value.find { ident -> ident.ident == it.key && ident.gruppe == IDENT_GRUPPE.AKTORID && !ident.historisk }
-            if (aktorIdIdent == null) {
-                throw IllegalStateException("Fant ikke aktorId i PDL")
-            }
-            Person(
-                navn = aktorIdIdent.navn,
-                foedselsdato = aktorIdIdent.fodselsdato,
-                identer = it.value.map { ident ->
-                    Ident(
-                        ident = ident.ident,
-                        gruppe = ident.gruppe,
-                        historisk = ident.historisk
-                    )
-                }
-            )
-        }
-
-    }
 }

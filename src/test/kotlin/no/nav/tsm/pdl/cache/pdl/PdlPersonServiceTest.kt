@@ -1,6 +1,7 @@
 package no.nav.tsm.pdl.cache.pdl
 
 import no.nav.tsm.pdl.cache.TestcontainersConfiguration
+import no.nav.tsm.pdl.cache.person.mapToPersons
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +25,7 @@ class PdlPersonServiceTest() {
     fun savePersonWithoutNameAndFoedsel() {
         val person = person().copy(navn = null, foedselsdato = null)
         personService.updatePerson(person.getAktorId(), person)
-        val personFromDb = personService.mapToPersons(personRepository.getPersons(listOf(person.getAktorId()))).first()
+        val personFromDb = mapToPersons(personRepository.getPersons(listOf(person.getAktorId()))).first()
         assertEquals(person, personFromDb)
     }
 
