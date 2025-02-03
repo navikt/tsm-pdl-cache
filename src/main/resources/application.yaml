@@ -5,8 +5,13 @@ spring:
         password: ${db.password}
     flyway:
         enabled: true
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    audiences: ${azure.app.client.id}
+                    issuer-uri: ${azure.openid.config.issuer}
     kafka:
-
         consumer:
             enable-auto-commit: true
             max-poll-records: 1
@@ -23,6 +28,7 @@ spring:
             key-store-location: file:${kafka.keystore.path}
             key-store-type: PKCS12
             key-store-password: ${kafka.credstore.password}
+
 management:
     endpoint:
         prometheus.enabled: true

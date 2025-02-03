@@ -1,0 +1,13 @@
+spring:
+    datasource:
+        url: "${DB_JDBC_URL}"
+        username: ${db.username}
+        password: ${db.password}
+    flyway:
+        enabled: true
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    audiences: audience  # Only if you want audience checking
+                    issuer-uri: issuer

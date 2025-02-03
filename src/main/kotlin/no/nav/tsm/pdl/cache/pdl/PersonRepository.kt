@@ -34,6 +34,31 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         }
     }
 
+    fun getPerson(ident: String) : List<PersnDbResult> {
+        val sql = """
+            SELECT
+                id.ident as ident,
+                id.gruppe as gruppe,
+                id.historisk as historisk,
+                id.aktor_id as aktor_id,
+                p.navn as navn,
+                p.aktor_id as p_aktor_id,
+                p.fodselsdato as fodselsdato
+            FROM identer id inner join person p on id.aktor_id = p.aktor_id WHERE id.aktor_id = (select t.aktor_id from identer t where t.ident = :ident);
+        """
+        val persons = sqlTemplate.query(sql, mapOf("ident" to ident)) { rs, _ ->
+            PersnDbResult(
+                navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it) },
+                fodselsdato = rs.getDate("fodselsdato")?.let { it.toLocalDate() },
+                aktorId = rs.getString("p_aktor_id"),
+                ident = rs.getString("ident"),
+                historisk = rs.getBoolean("historisk"),
+                gruppe = rs.getString("gruppe").let { IDENT_GRUPPE.valueOf(it) })
+        }
+        return persons
+    }
+
+
     fun getPersons(idents: List<String>): List<PersnDbResult> {
         val sql = """
             SELECT 
@@ -48,7 +73,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         """
         val persons = sqlTemplate.query(sql, mapOf("idents" to idents)) { rs, _ ->
             PersnDbResult(
-                navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it.toString()) },
+                navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it) },
                 fodselsdato = rs.getDate("fodselsdato")?.let { it.toLocalDate() },
                 aktorId = rs.getString("p_aktor_id"),
                 ident = rs.getString("ident"),
@@ -69,7 +94,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
             "fodselsdato" to person.foedselsdato
         ))
         val identInserts = "INSERT INTO identer(ident, aktor_id, gruppe, historisk) VALUES(:ident, :aktorId, :gruppe, :historisk)"
-        val identInsertsResult = sqlTemplate.batchUpdate(identInserts, person.identer.map {
+        sqlTemplate.batchUpdate(identInserts, person.identer.map {
             mapOf(
                 "ident" to it.ident,
                 "aktorId" to aktorId,

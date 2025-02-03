@@ -1,6 +1,9 @@
 package no.nav.tsm.pdl.cache.pdl
 
+import kotlinx.coroutines.runBlocking
 import no.nav.tsm.pdl.cache.TestcontainersConfiguration
+import no.nav.tsm.pdl.cache.person.PersonService
+import no.nav.tsm.pdl.cache.person.mapToPersons
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,15 +19,18 @@ import kotlin.test.assertEquals
 class PdlPersonServiceTest() {
 
     @Autowired
-    private lateinit var personService: PdlPersonService
+    private lateinit var pdlPersonService: PdlPersonService
+
+    @Autowired
+    private lateinit var personService: PersonService
 
     @Autowired private lateinit var personRepository: PersonRepository
 
     @Test
     fun savePersonWithoutNameAndFoedsel() {
         val person = person().copy(navn = null, foedselsdato = null)
-        personService.updatePerson(person.getAktorId(), person)
-        val personFromDb = personService.mapToPersons(personRepository.getPersons(listOf(person.getAktorId()))).first()
+        pdlPersonService.updatePerson(person.getAktorId(), person)
+        val personFromDb = mapToPersons(personRepository.getPersons(listOf(person.getAktorId()))).first()
         assertEquals(person, personFromDb)
     }
 
@@ -45,7 +51,7 @@ class PdlPersonServiceTest() {
                 )
             )
         )
-        personService.updatePerson(aktorId, person)
+        pdlPersonService.updatePerson(aktorId, person)
     }
 
     @Test
@@ -58,15 +64,17 @@ class PdlPersonServiceTest() {
             ))
         )
 
-        personService.updatePerson(person.getAktorId(), person)
-        val identer = personRepository.getPersons(person.identer.map { it.ident })
-        assertThat(identer).hasSize(2)
+        pdlPersonService.updatePerson(person.getAktorId(), person)
+        runBlocking {
+            val person = personService.getPerson(person.getAktorId())
+            assertThat(person.identer).hasSize(2)
+        }
     }
 
     @Test
     fun `Insert person where historisk aktorId is another person`() {
         val firstPerson = person()
-        personService.updatePerson(firstPerson.getAktorId(), firstPerson)
+        pdlPersonService.updatePerson(firstPerson.getAktorId(), firstPerson)
         val lastPerson = person(listOf(
             Ident(
                 ident = firstPerson.getAktorId(),
@@ -74,7 +82,7 @@ class PdlPersonServiceTest() {
                 historisk = true
             )
         ))
-        personService.updatePerson(lastPerson.getAktorId(), lastPerson)
+        pdlPersonService.updatePerson(lastPerson.getAktorId(), lastPerson)
         assertEquals(listOf(lastPerson.getAktorId()), personRepository.getAktorIds(listOf(firstPerson.getAktorId())))
     }
 
@@ -90,7 +98,7 @@ class PdlPersonServiceTest() {
                 Ident(person2.getAktorId(), IDENT_GRUPPE.AKTORID, false))
         )
 
-        personService.updatePerson(person4.getAktorId(), person4)
+        pdlPersonService.updatePerson(person4.getAktorId(), person4)
 
         assertEquals(listOf(person4.getAktorId()).sorted(), personRepository.getAktorIds(listOf("FNR1", "FNR2", "FNR3", person1.getAktorId(), person2.getAktorId())).sorted())
         assertEquals(listOf(person3.getAktorId()), personRepository.getAktorIds(listOf("FNR4", person3.getAktorId())))
@@ -112,8 +120,8 @@ class PdlPersonServiceTest() {
         ))
 
 
-        personService.updatePerson(person4.getAktorId(), person4)
-        personService.updatePerson(person5.getAktorId(), person5)
+        pdlPersonService.updatePerson(person4.getAktorId(), person4)
+        pdlPersonService.updatePerson(person5.getAktorId(), person5)
 
         assertEquals(listOf(person4.getAktorId()), personRepository.getAktorIds(listOf("FNR1")).sorted())
         assertEquals(listOf(person4.getAktorId()), personRepository.getAktorIds(listOf(person4.getAktorId())).sorted())
@@ -148,9 +156,9 @@ class PdlPersonServiceTest() {
             )
         )
 
-        personService.updatePerson(person1.getAktorId(), person1)
-        personService.updatePerson(person2.getAktorId(), person2)
-        personService.updatePerson(person3.getAktorId(), person3)
+        pdlPersonService.updatePerson(person1.getAktorId(), person1)
+        pdlPersonService.updatePerson(person2.getAktorId(), person2)
+        pdlPersonService.updatePerson(person3.getAktorId(), person3)
 
         assertEquals(listOf(person1.getAktorId()), personRepository.getAktorIds(listOf("FNR1", "FNR2")))
         assertEquals(listOf(person2.getAktorId()), personRepository.getAktorIds(listOf("FNR3")))
