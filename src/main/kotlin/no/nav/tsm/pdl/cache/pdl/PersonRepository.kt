@@ -48,7 +48,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         """
         val persons = sqlTemplate.query(sql, mapOf("ident" to ident)) { rs, _ ->
             PersnDbResult(
-                navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it.toString()) },
+                navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it) },
                 fodselsdato = rs.getDate("fodselsdato")?.let { it.toLocalDate() },
                 aktorId = rs.getString("p_aktor_id"),
                 ident = rs.getString("ident"),
@@ -73,7 +73,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         """
         val persons = sqlTemplate.query(sql, mapOf("idents" to idents)) { rs, _ ->
             PersnDbResult(
-                navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it.toString()) },
+                navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it) },
                 fodselsdato = rs.getDate("fodselsdato")?.let { it.toLocalDate() },
                 aktorId = rs.getString("p_aktor_id"),
                 ident = rs.getString("ident"),

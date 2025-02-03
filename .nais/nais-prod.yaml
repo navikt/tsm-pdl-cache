@@ -47,6 +47,7 @@ spec:
       rules:
         - application: macgyver
           namespace: teamsykmelding
+        - application: regulus-maximus
   observability:
     autoInstrumentation:
       enabled: true
