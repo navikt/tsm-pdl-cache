@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class PersonService(private val personRepository: PersonRepository) {
 
     fun getPerson(ident: String) : Person {
-        val persons = personRepository.getPersons(listOf(ident)).let { mapToPersons(it) }
+        val persons = mapToPersons(personRepository.getPerson(ident))
         if (persons.size > 1) {
             throw ToManyPersonException("Ident gives to many persons")
         }

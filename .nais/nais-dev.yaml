@@ -45,6 +45,8 @@ spec:
       rules:
         - application: macgyver
           namespace: teamsykmelding
+        - application: syk-inn
+        - application: syk-inn-api
   observability:
     autoInstrumentation:
       enabled: true
