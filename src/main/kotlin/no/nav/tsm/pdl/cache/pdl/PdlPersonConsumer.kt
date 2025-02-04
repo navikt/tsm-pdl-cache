@@ -1,6 +1,7 @@
 package no.nav.tsm.pdl.cache.pdl
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import no.nav.tsm.pdl.cache.util.objectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
@@ -12,6 +13,7 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
 
     private val logger = LoggerFactory.getLogger(PdlPersonConsumer::class.java)
 
+    @WithSpan
     @KafkaListener(id = "tsm-pdl-cache-consumer", topics = ["pdl.pdl-persondokument-v1"])
     fun consume(record: ConsumerRecord<String, String?>) {
         val aktorId = record.key()
