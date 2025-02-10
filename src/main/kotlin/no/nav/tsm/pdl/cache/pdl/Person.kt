@@ -31,13 +31,12 @@ data class PdlNavn(
     val fornavn: String,
     val mellomnavn: String?,
     val etternavn: String,
-    val historisk: Boolean,
+    val metadata: Metadata
 )
 
 data class HentPerson (
-    val foedsel: List<Foedsel>,
-    val navn: List<PdlNavn>,
-)
+    val foedselsdato: List<Foedselsdato>,
+    val navn: List<PdlNavn>, )
 data class PdlPerson(
     val hentPerson: HentPerson,
     val hentIdenter: HentIdenter
@@ -47,9 +46,11 @@ data class HentIdenter(
     val identer: List<Ident>
 )
 
-data class Foedsel(
+data class Foedselsdato(
     val foedselsdato: LocalDate?,
-    val historisk: Boolean
+    val metadata: Metadata
 )
+
+data class Metadata(val historisk: Boolean)
 
 fun Person.getAktorId() = identer.single { it.gruppe == IDENT_GRUPPE.AKTORID && !it.historisk }.ident

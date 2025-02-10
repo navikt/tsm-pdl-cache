@@ -21,14 +21,14 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
             ?.let { objectMapper.readValue<PdlPerson>(it) }
             ?.let { pdlPerson ->
                 Person(
-                    navn = pdlPerson.hentPerson.navn.singleOrNull { !it.historisk }?.let {
+                    navn = pdlPerson.hentPerson.navn.singleOrNull { !it.metadata.historisk }?.let {
                         Navn(
                             fornavn = it.fornavn,
                             mellomnavn = it.mellomnavn,
                             etternavn = it.etternavn
                         )
                     },
-                    foedselsdato = pdlPerson.hentPerson.foedsel.singleOrNull { !it.historisk }?.foedselsdato,
+                    foedselsdato = pdlPerson.hentPerson.foedselsdato.singleOrNull { !it.metadata.historisk }?.foedselsdato,
                     identer = pdlPerson.hentIdenter.identer
                 )
             }
