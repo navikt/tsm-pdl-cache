@@ -32,6 +32,9 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
                     identer = pdlPerson.hentIdenter.identer
                 )
             }
+        if(person?.navn?.fornavn == null) {
+            logger.info("Received person without name for aktor: $aktorId, offset: ${record.offset()}")
+        }
         pdlPersonService.updatePerson(aktorId, person)
     }
 }
