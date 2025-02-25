@@ -19,12 +19,15 @@ data class Navn(
     val etternavn: String,
 )
 
+
+
 data class Person(
     val navn: Navn?,
     val foedselsdato: LocalDate?,
     val identer: List<Ident>,
     val falskIdent: Boolean,
-    val dodsdato: LocalDate?
+    val doed: Boolean,
+    val doedsdato: LocalDate?
 )
 
 
@@ -39,7 +42,7 @@ data class FalskIdentitet(
     val erFalsk: Boolean,
 )
 data class Doedsfall(
-    val doedsdato: LocalDate,
+    val doedsdato: LocalDate?,
     val metadata: Metadata
 )
 
@@ -65,6 +68,6 @@ data class Foedselsdato(
     val metadata: Metadata
 )
 
-data class Metadata(val historisk: Boolean)
+data class Metadata(val historisk: Boolean, val master: String)
 
 fun Person.getAktorId() = identer.single { it.gruppe == IDENT_GRUPPE.AKTORID && !it.historisk }.ident

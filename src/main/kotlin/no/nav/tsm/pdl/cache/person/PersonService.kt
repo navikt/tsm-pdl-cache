@@ -45,7 +45,8 @@ fun mapToPersons(list: List<PersnDbResult>) : List<Person> {
                 )
             },
             falskIdent = aktorIdIdent.falskIdent,
-            dodsdato = aktorIdIdent.dodsdato
+            doedsdato = aktorIdIdent.doedsdato,
+            doed = aktorIdIdent.doed
         )
     }
 }

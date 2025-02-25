@@ -92,7 +92,8 @@ class PersonApiTest {
                 Ident("npid", IDENT_GRUPPE.NPID, false)
             ),
             falskIdent = false,
-            dodsdato = null
+            doedsdato = null,
+            doed = false,
         ))
         val result =
             webTestClient.get().uri("/api/person")

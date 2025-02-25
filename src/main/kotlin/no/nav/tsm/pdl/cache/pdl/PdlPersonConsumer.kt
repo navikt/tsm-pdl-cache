@@ -20,10 +20,12 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
         val person = record.value()
             ?.let { objectMapper.readValue<PdlPerson>(it) }
             ?.let { pdlPerson ->
+
                 if(pdlPerson.hentPerson.foedsel == null && pdlPerson.hentPerson.foedselsdato == null) {
                     logger.info("Received person without foedsel and foedseldato for aktor: $aktorId, offset: ${record.offset()}")
                     throw IllegalStateException("Received person without foedsel and foedseldato for aktor: $aktorId, offset: ${record.offset()}")
                 }
+                val (isDoed, doedsdato) = getDoedsdato(pdlPerson)
                 Person(
                     navn = pdlPerson.hentPerson.navn.singleOrNull { !it.metadata.historisk }?.let {
                         Navn(
@@ -36,14 +38,21 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
                         ?: pdlPerson.hentPerson.foedsel?.singleOrNull { !it.metadata.historisk }?.foedselsdato,
                     identer = pdlPerson.hentIdenter.identer,
                     falskIdent = pdlPerson.hentPerson.falskIdentitet?.erFalsk ?: false,
-                    dodsdato = pdlPerson.hentPerson.doedsfall.firstOrNull { !it.metadata.historisk }?.doedsdato
+                    doed = isDoed,
+                    doedsdato = doedsdato
                 )
             }
 
-
-        if(person?.navn?.fornavn == null) {
-            logger.info("Received person without name for aktor: $aktorId, offset: ${record.offset()}, isFalsk ${person?.falskIdent}")
-        }
         pdlPersonService.updatePerson(aktorId, person)
+    }
+
+    private fun getDoedsdato(
+        pdlPerson: PdlPerson,
+    ) = if (pdlPerson.hentPerson.doedsfall.isNotEmpty()) {
+        val pdlDoedsdato =
+            pdlPerson.hentPerson.doedsfall.filter { !it.metadata.historisk && it.doedsdato != null }
+        true to (pdlDoedsdato.firstOrNull { it.metadata.master == "PDL" }?.doedsdato ?: pdlDoedsdato.firstOrNull()?.doedsdato)
+    } else {
+        false to null
     }
 }

@@ -51,7 +51,8 @@ class PdlPersonServiceTest() {
                 )
             ),
             falskIdent = false,
-            dodsdato = null
+            doedsdato = null,
+            doed = false,
         )
         pdlPersonService.updatePerson(aktorId, person)
     }
@@ -188,6 +189,7 @@ private fun person(identer: List<Ident> = listOf()): Person {
             )
         ) + identer,
         falskIdent = false,
-        dodsdato = null
+        doedsdato = null,
+        doed = false,
     )
 }
