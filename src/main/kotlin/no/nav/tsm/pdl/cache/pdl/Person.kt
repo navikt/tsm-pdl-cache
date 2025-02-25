@@ -44,7 +44,8 @@ data class Doedsfall(
 )
 
 data class HentPerson (
-    val foedselsdato: List<Foedselsdato>,
+    val foedselsdato: List<Foedselsdato>?,
+    val foedsel: List<Foedselsdato>?,
     val navn: List<PdlNavn>,
     val falskIdentitet: FalskIdentitet?,
     val doedsfall: List<Doedsfall>

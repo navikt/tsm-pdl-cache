@@ -20,6 +20,10 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
         val person = record.value()
             ?.let { objectMapper.readValue<PdlPerson>(it) }
             ?.let { pdlPerson ->
+                if(pdlPerson.hentPerson.foedsel == null && pdlPerson.hentPerson.foedselsdato == null) {
+                    logger.info("Received person without foedsel and foedseldato for aktor: $aktorId, offset: ${record.offset()}")
+                    throw IllegalStateException("Received person without foedsel and foedseldato for aktor: $aktorId, offset: ${record.offset()}")
+                }
                 Person(
                     navn = pdlPerson.hentPerson.navn.singleOrNull { !it.metadata.historisk }?.let {
                         Navn(
@@ -28,12 +32,15 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
                             etternavn = it.etternavn
                         )
                     },
-                    foedselsdato = pdlPerson.hentPerson.foedselsdato.singleOrNull { !it.metadata.historisk }?.foedselsdato,
+                    foedselsdato = pdlPerson.hentPerson.foedselsdato?.singleOrNull { !it.metadata.historisk }?.foedselsdato
+                        ?: pdlPerson.hentPerson.foedsel?.singleOrNull { !it.metadata.historisk }?.foedselsdato,
                     identer = pdlPerson.hentIdenter.identer,
                     falskIdent = pdlPerson.hentPerson.falskIdentitet?.erFalsk ?: false,
                     dodsdato = pdlPerson.hentPerson.doedsfall.firstOrNull { !it.metadata.historisk }?.doedsdato
                 )
             }
+
+
         if(person?.navn?.fornavn == null) {
             logger.info("Received person without name for aktor: $aktorId, offset: ${record.offset()}, isFalsk ${person?.falskIdent}")
         }
