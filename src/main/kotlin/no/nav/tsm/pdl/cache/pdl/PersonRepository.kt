@@ -14,7 +14,9 @@ class PersnDbResult(
     val aktorId: String,
     val ident: String,
     val historisk: Boolean,
-    val gruppe: IDENT_GRUPPE
+    val gruppe: IDENT_GRUPPE,
+    val falskIdent: Boolean,
+    val dodsdato: LocalDate?
 )
 
 @Repository
@@ -43,7 +45,9 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
                 id.aktor_id as aktor_id,
                 p.navn as navn,
                 p.aktor_id as p_aktor_id,
-                p.fodselsdato as fodselsdato
+                p.fodselsdato as fodselsdato,
+                p.falsk_identitet as falsk_ident,
+                p.dodsdato as dodsdato
             FROM identer id inner join person p on id.aktor_id = p.aktor_id WHERE id.aktor_id = (select t.aktor_id from identer t where t.ident = :ident);
         """
         val persons = sqlTemplate.query(sql, mapOf("ident" to ident)) { rs, _ ->
@@ -53,7 +57,10 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
                 aktorId = rs.getString("p_aktor_id"),
                 ident = rs.getString("ident"),
                 historisk = rs.getBoolean("historisk"),
-                gruppe = rs.getString("gruppe").let { IDENT_GRUPPE.valueOf(it) })
+                gruppe = rs.getString("gruppe").let { IDENT_GRUPPE.valueOf(it) },
+                falskIdent = rs.getBoolean("falsk_ident"),
+                dodsdato = rs.getDate("dodsdato")?.toLocalDate()
+            )
         }
         return persons
     }
@@ -68,7 +75,9 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
             id.aktor_id as aktor_id,
             p.navn as navn,
             p.aktor_id as p_aktor_id,
-            p.fodselsdato as fodselsdato
+            p.fodselsdato as fodselsdato,
+            p.falsk_identitet as falsk_ident,
+            p.dodsdato as dodsdato
             FROM identer id inner join person p on id.aktor_id = p.aktor_id WHERE id.ident in (:idents) 
         """
         val persons = sqlTemplate.query(sql, mapOf("idents" to idents)) { rs, _ ->
@@ -78,20 +87,25 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
                 aktorId = rs.getString("p_aktor_id"),
                 ident = rs.getString("ident"),
                 historisk = rs.getBoolean("historisk"),
-                gruppe = rs.getString("gruppe").let { IDENT_GRUPPE.valueOf(it) })
+                gruppe = rs.getString("gruppe").let { IDENT_GRUPPE.valueOf(it) },
+                falskIdent = rs.getBoolean("falsk_ident"),
+                dodsdato = rs.getDate("dodsdato")?.toLocalDate()
+            )
         }
         return persons
     }
 
     fun insertPerson(aktorId: String, person: Person) {
-        val personInsert = "INSERT into person(aktor_id, navn, fodselsdato) VALUES(:aktorId, :navn, :fodselsdato)"
+        val personInsert = "INSERT into person(aktor_id, navn, fodselsdato, falsk_identitet, dodsdato) VALUES(:aktorId, :navn, :fodselsdato, :falskIdent, :dodsdato)"
         sqlTemplate.update(personInsert, mapOf(
             "aktorId" to aktorId,
             "navn" to person.navn?.let { PGobject().apply {
                 type = "jsonb"
                 value = objectMapper.writeValueAsString(person.navn)
             } },
-            "fodselsdato" to person.foedselsdato
+            "fodselsdato" to person.foedselsdato,
+            "falskIdent" to person.falskIdent,
+            "dodsdato" to person.dodsdato
         ))
         val identInserts = "INSERT INTO identer(ident, aktor_id, gruppe, historisk) VALUES(:ident, :aktorId, :gruppe, :historisk)"
         sqlTemplate.batchUpdate(identInserts, person.identer.map {
@@ -102,6 +116,5 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
                 "historisk" to it.historisk
             )
         }.toTypedArray())
-
     }
 }

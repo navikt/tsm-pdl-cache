@@ -29,11 +29,13 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
                         )
                     },
                     foedselsdato = pdlPerson.hentPerson.foedselsdato.singleOrNull { !it.metadata.historisk }?.foedselsdato,
-                    identer = pdlPerson.hentIdenter.identer
+                    identer = pdlPerson.hentIdenter.identer,
+                    falskIdent = pdlPerson.hentPerson.falskIdentitet?.erFalsk ?: false,
+                    dodsdato = pdlPerson.hentPerson.doedsfall.firstOrNull { !it.metadata.historisk }?.doedsdato
                 )
             }
         if(person?.navn?.fornavn == null) {
-            logger.info("Received person without name for aktor: $aktorId, offset: ${record.offset()}")
+            logger.info("Received person without name for aktor: $aktorId, offset: ${record.offset()}, isFalsk ${person?.falskIdent}")
         }
         pdlPersonService.updatePerson(aktorId, person)
     }

@@ -22,7 +22,9 @@ data class Navn(
 data class Person(
     val navn: Navn?,
     val foedselsdato: LocalDate?,
-    val identer: List<Ident>
+    val identer: List<Ident>,
+    val falskIdent: Boolean,
+    val dodsdato: LocalDate?
 )
 
 
@@ -33,10 +35,21 @@ data class PdlNavn(
     val etternavn: String,
     val metadata: Metadata
 )
+data class FalskIdentitet(
+    val erFalsk: Boolean,
+)
+data class Doedsfall(
+    val doedsdato: LocalDate,
+    val metadata: Metadata
+)
 
 data class HentPerson (
     val foedselsdato: List<Foedselsdato>,
-    val navn: List<PdlNavn>, )
+    val navn: List<PdlNavn>,
+    val falskIdentitet: FalskIdentitet?,
+    val doedsfall: List<Doedsfall>
+)
+
 data class PdlPerson(
     val hentPerson: HentPerson,
     val hentIdenter: HentIdenter
