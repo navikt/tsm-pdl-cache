@@ -1,7 +1,7 @@
 plugins {
-	kotlin("jvm") version "2.1.0"
-	kotlin("plugin.spring") version "2.1.0"
-	id("org.springframework.boot") version "3.4.2"
+	kotlin("jvm") version "2.1.20"
+	kotlin("plugin.spring") version "2.1.20"
+	id("org.springframework.boot") version "3.4.4"
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -17,11 +17,11 @@ java {
 repositories {
 	mavenCentral()
 }
-val logbackVersion = "1.5.16"
+val logbackVersion = "1.5.18"
 val logbackEncoderVersion = "8.0"
-val flywayVersion= "10.20.0"
+val flywayVersion= "11.4.1"
 val jjwtVersion = "0.12.6"
-val opentelemeqtryVersion = "2.3.0"
+val opentelemeqtryVersion = "2.14.0"
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-security")
