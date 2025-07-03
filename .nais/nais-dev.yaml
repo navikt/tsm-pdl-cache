@@ -52,8 +52,7 @@ spec:
         - application: syk-inn
         - application: syk-inn-api
         - application: regulus-maximus
-        - application: syfosmmanuell-backend
-          namespace: teamsykmelding
+        - application: tsm-migrator
   observability:
     autoInstrumentation:
       enabled: true

@@ -52,8 +52,7 @@ spec:
         - application: macgyver
           namespace: teamsykmelding
         - application: regulus-maximus
-        - application: syfosmmanuell-backend
-          namespace: teamsykmelding
+        - application: tsm-migrator
   observability:
     autoInstrumentation:
       enabled: true
