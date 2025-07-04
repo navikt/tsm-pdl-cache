@@ -52,7 +52,7 @@ spec:
         - application: syk-inn
         - application: syk-inn-api
         - application: regulus-maximus
-        - application: tsm-migrator
+        - application: migrator
   observability:
     autoInstrumentation:
       enabled: true
