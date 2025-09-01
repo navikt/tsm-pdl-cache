@@ -53,6 +53,7 @@ spec:
         - application: syk-inn-api
         - application: regulus-maximus
         - application: migrator
+        - application: journey
   observability:
     autoInstrumentation:
       enabled: true

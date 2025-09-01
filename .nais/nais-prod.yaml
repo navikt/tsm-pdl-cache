@@ -53,6 +53,7 @@ spec:
           namespace: teamsykmelding
         - application: regulus-maximus
         - application: migrator
+        - application: journey
   observability:
     autoInstrumentation:
       enabled: true
