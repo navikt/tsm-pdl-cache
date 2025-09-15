@@ -54,6 +54,7 @@ spec:
         - application: regulus-maximus
         - application: migrator
         - application: journey
+        - application: tsm-input-dolly
   observability:
     autoInstrumentation:
       enabled: true
