@@ -54,6 +54,7 @@ spec:
         - application: regulus-maximus
         - application: migrator
         - application: journey
+        - application: tsm-manuell-api
   observability:
     autoInstrumentation:
       enabled: true

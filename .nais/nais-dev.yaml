@@ -55,6 +55,7 @@ spec:
         - application: migrator
         - application: journey
         - application: tsm-input-dolly
+        - application: tsm-manuell-api
   observability:
     autoInstrumentation:
       enabled: true
