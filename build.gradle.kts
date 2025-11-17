@@ -17,9 +17,9 @@ java {
 repositories {
 	mavenCentral()
 }
-val logbackVersion = "1.5.20"
+val logbackVersion = "1.5.21"
 val logbackEncoderVersion = "9.0"
-val flywayVersion= "11.16.0"
+val flywayVersion= "11.17.0"
 val jjwtVersion = "0.13.0"
 val opentelemeqtryVersion = "2.21.0"
 dependencies {
