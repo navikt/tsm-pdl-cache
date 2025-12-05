@@ -51,6 +51,8 @@ spec:
       rules:
         - application: macgyver
           namespace: teamsykmelding
+        - application: pale-2-regler
+          namespace: teamsykmelding
         - application: regulus-maximus
         - application: migrator
         - application: journey

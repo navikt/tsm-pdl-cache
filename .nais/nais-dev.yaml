@@ -49,6 +49,8 @@ spec:
       rules:
         - application: macgyver
           namespace: teamsykmelding
+        - application: pale-2-regler
+          namespace: teamsykmelding
         - application: syk-inn
         - application: syk-inn-api
         - application: regulus-maximus
