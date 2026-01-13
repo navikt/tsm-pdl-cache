@@ -43,6 +43,10 @@ spec:
       enabled: true
       tenant: trygdeetaten.no
   accessPolicy:
+    outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
     inbound:
       rules:
         - application: macgyver

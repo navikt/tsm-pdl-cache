@@ -45,6 +45,10 @@ spec:
       enabled: true
       tenant: nav.no
   accessPolicy:
+    outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
     inbound:
       rules:
         - application: macgyver
