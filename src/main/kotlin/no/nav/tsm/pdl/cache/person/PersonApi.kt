@@ -2,6 +2,7 @@ package no.nav.tsm.pdl.cache.person
 
 import no.nav.tsm.pdl.cache.pdl.Person
 import no.nav.tsm.pdl.cache.person.exceptions.IdentIsMissingException
+import no.nav.tsm.pdl.cache.util.isTestPerson
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController

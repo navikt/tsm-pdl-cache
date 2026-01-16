@@ -2,11 +2,12 @@ package no.nav.tsm.pdl.cache.person
 
 import no.nav.tsm.pdl.cache.pdl.IDENT_GRUPPE
 import no.nav.tsm.pdl.cache.pdl.Ident
-import no.nav.tsm.pdl.cache.pdl.PersnDbResult
+import no.nav.tsm.pdl.cache.pdl.PersonDbResult
 import no.nav.tsm.pdl.cache.pdl.Person
 import no.nav.tsm.pdl.cache.pdl.PersonRepository
 import no.nav.tsm.pdl.cache.person.exceptions.PersonNotFoundException
 import no.nav.tsm.pdl.cache.person.exceptions.ToManyPersonException
+import no.nav.tsm.pdl.cache.util.isTestPerson
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,11 +23,17 @@ class PersonService(private val personRepository: PersonRepository) {
             throw PersonNotFoundException("Person not found")
         }
 
-        return persons.single()
+        val person = persons.single()
+
+        if(isTestPerson(person)) {
+            throw PersonNotFoundException("Test person")
+        }
+
+        return person
     }
 }
 
-fun mapToPersons(list: List<PersnDbResult>) : List<Person> {
+fun mapToPersons(list: List<PersonDbResult>) : List<Person> {
     return list.groupBy {
         it.aktorId
     }.map {

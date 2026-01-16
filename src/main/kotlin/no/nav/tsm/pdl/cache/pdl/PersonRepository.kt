@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
-class PersnDbResult(
+data class PersonDbResult(
     val navn: Navn?,
     val fodselsdato: LocalDate?,
     val aktorId: String,
@@ -36,7 +36,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
         }
     }
 
-    fun getPerson(ident: String) : List<PersnDbResult> {
+    fun getPerson(ident: String) : List<PersonDbResult> {
         val sql = """
             SELECT
                 id.ident as ident,
@@ -52,7 +52,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
             FROM identer id inner join person p on id.aktor_id = p.aktor_id WHERE id.aktor_id = (select t.aktor_id from identer t where t.ident = :ident);
         """
         val persons = sqlTemplate.query(sql, mapOf("ident" to ident)) { rs, _ ->
-            PersnDbResult(
+            PersonDbResult(
                 navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it) },
                 fodselsdato = rs.getDate("fodselsdato")?.let { it.toLocalDate() },
                 aktorId = rs.getString("p_aktor_id"),
@@ -68,7 +68,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
     }
 
 
-    fun getPersons(idents: List<String>): List<PersnDbResult> {
+    fun getPersons(idents: List<String>): List<PersonDbResult> {
         val sql = """
             SELECT 
             id.ident as ident,
@@ -84,7 +84,7 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
             FROM identer id inner join person p on id.aktor_id = p.aktor_id WHERE id.ident in (:idents) 
         """
         val persons = sqlTemplate.query(sql, mapOf("idents" to idents)) { rs, _ ->
-            PersnDbResult(
+            PersonDbResult(
                 navn = rs.getString("navn")?.let { objectMapper.readValue<Navn>(it) },
                 fodselsdato = rs.getDate("fodselsdato")?.let { it.toLocalDate() },
                 aktorId = rs.getString("p_aktor_id"),

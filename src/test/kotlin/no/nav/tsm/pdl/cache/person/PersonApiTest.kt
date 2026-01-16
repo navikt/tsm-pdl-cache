@@ -101,4 +101,14 @@ class PersonApiTest {
                 .header("ident", "123").exchange().returnResult(Person::class.java)
         assertEquals(HttpStatus.OK.value(), result.status.value())
     }
+
+    @Test
+    fun testGetPersonTestPerson() {
+        Mockito.`when`(personService.getPerson("13116900216")).thenAnswer {  throw PersonNotFoundException("Test person"); }
+        val result =
+            webTestClient.get().uri("/api/person")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer ${JwtUtil.createJwt()}")
+                .header("ident", "13116900216").exchange().returnResult(Person::class.java)
+        assertEquals(HttpStatus.NOT_FOUND.value(), result.status.value())
+    }
 }
