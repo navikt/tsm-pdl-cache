@@ -5,6 +5,7 @@ import no.nav.tsm.pdl.cache.util.objectMapper
 import org.postgresql.util.PGobject
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 data class PersonDbResult(
@@ -121,5 +122,14 @@ class PersonRepository(val sqlTemplate: NamedParameterJdbcTemplate) {
                 "historisk" to it.historisk
             )
         }.toTypedArray())
+    }
+
+    @Transactional
+    fun updateName(aktorId: String, navn: Navn): Int {
+        return sqlTemplate.update("UPDATE person SET navn = :navn where aktor_id = :aktorId",
+            mapOf("navn" to  PGobject().apply {
+                type = "jsonb"
+                value = objectMapper.writeValueAsString(navn)
+            },  "aktorId" to aktorId))
     }
 }
