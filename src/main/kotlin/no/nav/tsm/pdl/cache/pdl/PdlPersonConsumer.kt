@@ -27,13 +27,7 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
                 }
                 val (isDoed, doedsdato) = getDoedsdato(pdlPerson)
                 Person(
-                    navn = pdlPerson.hentPerson.navn.filter { !it.metadata.historisk }.sortedByDescending { it.gyldigFraOgMed }.firstOrNull()?.let {
-                        Navn(
-                            fornavn = it.fornavn,
-                            mellomnavn = it.mellomnavn,
-                            etternavn = it.etternavn
-                        )
-                    },
+                    navn = getName(pdlPerson),
                     foedselsdato = pdlPerson.hentPerson.foedselsdato?.firstOrNull { !it.metadata.historisk }?.foedselsdato
                         ?: pdlPerson.hentPerson.foedsel?.firstOrNull { !it.metadata.historisk }?.foedselsdato,
                     identer = pdlPerson.hentIdenter.identer,
@@ -56,3 +50,13 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
         false to null
     }
 }
+
+fun getName(pdlPerson: PdlPerson): Navn? =
+    pdlPerson.hentPerson.navn.filter { !it.metadata.historisk }.sortedByDescending { it.gyldigFraOgMed }.firstOrNull()
+        ?.let {
+            Navn(
+                fornavn = it.fornavn,
+                mellomnavn = it.mellomnavn,
+                etternavn = it.etternavn
+            )
+        }
