@@ -61,6 +61,7 @@ spec:
         - application: tsm-manuell-api
         - application: syk-inn
         - application: syk-inn-api
+        - application: zara
   observability:
     autoInstrumentation:
       enabled: true

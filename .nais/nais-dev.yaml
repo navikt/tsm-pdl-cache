@@ -60,6 +60,7 @@ spec:
         - application: journey
         - application: tsm-input-dolly
         - application: tsm-manuell-api
+        - application: zara
   observability:
     autoInstrumentation:
       enabled: true
