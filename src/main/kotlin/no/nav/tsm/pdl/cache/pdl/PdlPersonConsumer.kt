@@ -27,15 +27,15 @@ class PdlPersonConsumer(val pdlPersonService: PdlPersonService) {
                 }
                 val (isDoed, doedsdato) = getDoedsdato(pdlPerson)
                 Person(
-                    navn = pdlPerson.hentPerson.navn.singleOrNull { !it.metadata.historisk }?.let {
+                    navn = pdlPerson.hentPerson.navn.filter { !it.metadata.historisk }.sortedByDescending { it.gyldigFraOgMed }.firstOrNull()?.let {
                         Navn(
                             fornavn = it.fornavn,
                             mellomnavn = it.mellomnavn,
                             etternavn = it.etternavn
                         )
                     },
-                    foedselsdato = pdlPerson.hentPerson.foedselsdato?.singleOrNull { !it.metadata.historisk }?.foedselsdato
-                        ?: pdlPerson.hentPerson.foedsel?.singleOrNull { !it.metadata.historisk }?.foedselsdato,
+                    foedselsdato = pdlPerson.hentPerson.foedselsdato?.firstOrNull { !it.metadata.historisk }?.foedselsdato
+                        ?: pdlPerson.hentPerson.foedsel?.firstOrNull { !it.metadata.historisk }?.foedselsdato,
                     identer = pdlPerson.hentIdenter.identer,
                     falskIdent = pdlPerson.hentPerson.falskIdentitet?.erFalsk ?: false,
                     doed = isDoed,

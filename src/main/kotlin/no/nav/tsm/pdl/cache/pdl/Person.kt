@@ -36,6 +36,7 @@ data class PdlNavn(
     val fornavn: String,
     val mellomnavn: String?,
     val etternavn: String,
+    val gyldigFraOgMed: String?,
     val metadata: Metadata
 )
 data class FalskIdentitet(
