@@ -61,6 +61,7 @@ spec:
         - application: tsm-input-dolly
         - application: tsm-manuell-api
         - application: zara
+        - application: tsm-behandlingsdager
   observability:
     autoInstrumentation:
       enabled: true

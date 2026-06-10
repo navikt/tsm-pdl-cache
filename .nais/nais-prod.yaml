@@ -62,6 +62,7 @@ spec:
         - application: syk-inn
         - application: syk-inn-api
         - application: zara
+        - application: tsm-behandlingsdager
   observability:
     autoInstrumentation:
       enabled: true
