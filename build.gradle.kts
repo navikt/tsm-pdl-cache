@@ -1,70 +1,78 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
+
 plugins {
-	kotlin("jvm") version "2.2.21"
-	kotlin("plugin.spring") version "2.2.21"
-	id("org.springframework.boot") version "3.5.16"
-	id("io.spring.dependency-management") version "1.1.7"
+    alias(libs.plugins.kotlin.jvm)
+    alias(ktorLibs.plugins.ktor)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.gradle.versions)
+    alias(libs.plugins.flyway)
 }
 
 group = "no.nav.tsm"
 version = "1.0.0"
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
-}
-
-repositories {
-	mavenCentral()
-}
-val logbackVersion = "1.5.34"
-val logbackEncoderVersion = "9.0"
-val flywayVersion= "11.16.0"
-val jjwtVersion = "0.13.0"
-val opentelemeqtryVersion = "2.21.0"
-dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-logging")
-	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:$opentelemeqtryVersion")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-	implementation("org.springframework.kafka:spring-kafka")
-	implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
-	implementation("org.flywaydb:flyway-core:$flywayVersion")
-	implementation("net.logstash.logback:logstash-logback-encoder:${logbackEncoderVersion}")
-	implementation("ch.qos.logback:logback-classic:$logbackVersion")
-	implementation("org.postgresql:postgresql")
-	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.boot:spring-boot-testcontainers")
-	testImplementation("io.projectreactor:reactor-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testImplementation("org.springframework.kafka:spring-kafka-test")
-	testImplementation("org.springframework.security:spring-security-test")
-	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("io.jsonwebtoken:jjwt:$jjwtVersion")
-	testImplementation("org.testcontainers:kafka")
-	testImplementation("org.testcontainers:postgresql")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+application {
+    mainClass = "io.ktor.server.netty.EngineMain"
 }
 
 kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
-	}
+    jvmToolchain(21)
 }
 
-tasks.withType<Test> {
-	useJUnitPlatform()
+tasks {
+    shadowJar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        mergeServiceFiles {}
+        from("src/main/resources/logback.xml") {
+            into("/")
+        }
+    }
+
+    configure<SpotlessExtension> {
+        kotlin { ktfmt("0.64").kotlinlangStyle().configure {
+            it.setMaxWidth(120)
+            it.setContinuationIndent(4)
+        } }
+        check {
+            dependsOn("spotlessApply")
+        }
+    }
 }
 
-tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-	archiveFileName.set("app.jar")
+dependencies {
+    implementation(ktorLibs.serialization.jackson)
+    implementation(ktorLibs.server.contentNegotiation)
+    implementation(ktorLibs.server.core)
+    implementation(ktorLibs.server.di)
+    implementation(ktorLibs.server.netty)
+    implementation(ktorLibs.server.metrics.micrometer)
+    implementation(ktorLibs.server.auth)
+    implementation(ktorLibs.server.auth.jwt)
+    implementation(ktorLibs.client.core)
+    implementation(ktorLibs.client.apache5)
+    implementation(ktorLibs.client.contentNegotiation)
+
+    implementation(libs.micrometer.registryPrometheus)
+    implementation(libs.hayden.khealth)
+    implementation(libs.logback.classic)
+    implementation(libs.logback.encoder)
+
+    implementation(libs.postgresql)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.json)
+    implementation(libs.exposed.date)
+    implementation(libs.flyway.postgres)
+    implementation(libs.flyway.core)
+
+    implementation(libs.tsm.sykmeldinger.input)
+    implementation(libs.tsm.ktor)
+
+    testImplementation(kotlin("test"))
+    testImplementation(ktorLibs.server.testHost)
+    testImplementation(ktorLibs.client.mock)
+    testImplementation(libs.kotest.assertions)
+    testImplementation(libs.mockk)
+    testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.testcontainers.kafka)
 }

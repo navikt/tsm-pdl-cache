@@ -1,0 +1,24 @@
+package no.nav.tsm.pdl.cache.plugins
+
+import io.ktor.server.application.*
+import io.ktor.server.plugins.di.*
+import no.nav.tsm.ktor.auth.texas.TexasClient
+import no.nav.tsm.pdl.cache.pdl.PdlPersonConsumer
+import no.nav.tsm.pdl.cache.pdl.PdlPersonService
+import no.nav.tsm.pdl.cache.pdl.PersonRepository
+import no.nav.tsm.pdl.cache.person.PersonService
+import no.nav.tsm.pdl.cache.testutils.Environment
+import no.nav.tsm.pdl.cache.testutils.initializeEnvironment
+
+fun Application.configureDependencyInjection() {
+    val config = environment.config
+
+    dependencies {
+        provide<Environment> { initializeEnvironment(config) }
+        provide(TexasClient::class)
+        provide(PdlPersonConsumer::class)
+        provide(PdlPersonService::class)
+        provide(PersonRepository::class)
+        provide(PersonService::class)
+    }
+}

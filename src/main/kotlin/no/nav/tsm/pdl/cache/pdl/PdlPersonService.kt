@@ -1,28 +1,28 @@
 package no.nav.tsm.pdl.cache.pdl
 
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import no.nav.tsm.ktor.logger
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
-@Service
 class PdlPersonService(val personRepository: PersonRepository) {
+    private val logger = logger()
 
-    private val logger = LoggerFactory.getLogger(PdlPersonService::class.java)
-
-    @Transactional
-    fun updatePerson(aktorId: String, person: Person?) {
-        if(person == null) {
+    fun updatePerson(aktorId: String, person: Person?) = transaction {
+        if (person == null) {
             personRepository.deletePersons(listOf(aktorId))
             logger.info("received tombstone for aktorId: $aktorId")
-            return
+            return@transaction
         }
+
         val aktorIds = personRepository.getAktorIds(person.identer.map { it.ident })
-        if(aktorIds.isNotEmpty()) {
+        if (aktorIds.isNotEmpty()) {
             personRepository.deletePersons(aktorIds)
-            if(aktorIds.size > 1 || aktorId != aktorIds.first()) {
-                logger.info("Found more than one / different aktorId for person $aktorId, deleted aktorIds: ${aktorIds.joinToString(", ")}")
+            if (aktorIds.size > 1 || aktorId != aktorIds.first()) {
+                logger.info(
+                    "Found more than one / different aktorId for person $aktorId, deleted aktorIds: ${aktorIds.joinToString(", ")}"
+                )
             }
         }
+
         personRepository.insertPerson(aktorId, person)
     }
 }

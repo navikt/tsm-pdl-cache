@@ -1,7 +1,6 @@
-package no.nav.tsm.pdl.cache.util
+package no.nav.tsm.pdl.cache.person
 
 import no.nav.tsm.pdl.cache.pdl.Person
-
 
 fun isTestPerson(person: Person): Boolean {
     return person.identer.any { testFNR.contains(it.ident) }
@@ -52,4 +51,3 @@ private val testFNR =
         "11064700342",
         "29019900248",
     )
-

@@ -13,13 +13,12 @@ data class Ident(
     val gruppe: IDENT_GRUPPE,
     val historisk: Boolean,
 )
+
 data class Navn(
     val fornavn: String,
     val mellomnavn: String?,
     val etternavn: String,
 )
-
-
 
 data class Person(
     val navn: Navn?,
@@ -27,46 +26,42 @@ data class Person(
     val identer: List<Ident>,
     val falskIdent: Boolean,
     val doed: Boolean,
-    val doedsdato: LocalDate?
+    val doedsdato: LocalDate?,
 )
-
-
 
 data class PdlNavn(
     val fornavn: String,
     val mellomnavn: String?,
     val etternavn: String,
     val gyldigFraOgMed: String?,
-    val metadata: Metadata
-)
-data class FalskIdentitet(
-    val erFalsk: Boolean,
-)
-data class Doedsfall(
-    val doedsdato: LocalDate?,
-    val metadata: Metadata
+    val metadata: Metadata,
 )
 
-data class HentPerson (
+data class FalskIdentitet(val erFalsk: Boolean)
+
+data class Doedsfall(
+    val doedsdato: LocalDate?,
+    val metadata: Metadata,
+)
+
+data class HentPerson(
     val foedselsdato: List<Foedselsdato>?,
     val foedsel: List<Foedselsdato>?,
     val navn: List<PdlNavn>,
     val falskIdentitet: FalskIdentitet?,
-    val doedsfall: List<Doedsfall>
+    val doedsfall: List<Doedsfall>,
 )
 
 data class PdlPerson(
     val hentPerson: HentPerson,
-    val hentIdenter: HentIdenter
+    val hentIdenter: HentIdenter,
 )
 
-data class HentIdenter(
-    val identer: List<Ident>
-)
+data class HentIdenter(val identer: List<Ident>)
 
 data class Foedselsdato(
     val foedselsdato: LocalDate?,
-    val metadata: Metadata
+    val metadata: Metadata,
 )
 
 data class Metadata(val historisk: Boolean, val master: String)
