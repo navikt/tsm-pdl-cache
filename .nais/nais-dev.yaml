@@ -35,18 +35,15 @@ spec:
     pool: nav-dev
 
   liveness:
-    path: /internal/health
+    path: /internal/health/alive
   readiness:
-    path: /internal/health
+    path: /internal/health/ready
+  preStopHook:
+    http:
+      path: /internal/shutdown
   prometheus:
     enabled: true
-    path: /internal/prometheus
-  startup:
-    failureThreshold: 10
-    initialDelay: 20
-    path: /internal/health
-    periodSeconds: 5
-    timeout: 1
+    path: /internal/metrics
 
   observability:
     autoInstrumentation:

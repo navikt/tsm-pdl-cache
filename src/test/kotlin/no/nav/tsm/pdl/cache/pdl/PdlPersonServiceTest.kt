@@ -1,33 +1,29 @@
 package no.nav.tsm.pdl.cache.pdl
 
-import kotlinx.coroutines.runBlocking
-import no.nav.tsm.pdl.cache.TestcontainersConfiguration
+import io.kotest.matchers.collections.shouldHaveSize
+import io.ktor.server.testing.*
+import java.time.LocalDate
+import java.util.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import no.nav.tsm.pdl.cache.person.PersonService
 import no.nav.tsm.pdl.cache.person.mapToPersons
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
-import java.time.LocalDate
-import java.util.UUID
-import kotlin.test.assertEquals
+import no.nav.tsm.pdl.cache.testutils.WithPostgresql
 
+class PdlPersonServiceTest : WithPostgresql() {
+    companion object {
+        init {
+            runMigrations(true)
+            connect()
+        }
+    }
 
-@Import(TestcontainersConfiguration::class)
-@SpringBootTest
-class PdlPersonServiceTest() {
-
-    @Autowired
-    private lateinit var pdlPersonService: PdlPersonService
-
-    @Autowired
-    private lateinit var personService: PersonService
-
-    @Autowired private lateinit var personRepository: PersonRepository
+    private val personRepository = PersonRepository()
+    private val personService = PersonService(personRepository = personRepository)
+    private val pdlPersonService: PdlPersonService = PdlPersonService(personRepository = personRepository)
 
     @Test
-    fun savePersonWithoutNameAndFoedsel() {
+    fun savePersonWithoutNameAndFoedsel() = testApplication {
         val person = person().copy(navn = null, foedselsdato = null)
         pdlPersonService.updatePerson(person.getAktorId(), person)
         val personFromDb = mapToPersons(personRepository.getPersons(listOf(person.getAktorId()))).first()
@@ -35,93 +31,101 @@ class PdlPersonServiceTest() {
     }
 
     @Test
-    fun saveNewPerson() {
+    fun saveNewPerson() = testApplication {
         val aktorId = UUID.randomUUID().toString()
-        val person = Person(
-            Navn(
-                fornavn = "Fornavn",
-                mellomnavn = "Mellomnavn",
-                etternavn = "Etternavn",
-            ), LocalDate.of(1991, 1, 1),
-            identer = listOf(
-                Ident(
-                    ident = aktorId,
-                    IDENT_GRUPPE.AKTORID,
-                    historisk = false
-                )
-            ),
-            falskIdent = false,
-            doedsdato = null,
-            doed = false,
-        )
+        val person =
+            Person(
+                Navn(
+                    fornavn = "Fornavn",
+                    mellomnavn = "Mellomnavn",
+                    etternavn = "Etternavn",
+                ),
+                LocalDate.of(1991, 1, 1),
+                identer =
+                    listOf(
+                        Ident(
+                            ident = aktorId,
+                            IDENT_GRUPPE.AKTORID,
+                            historisk = false,
+                        )
+                    ),
+                falskIdent = false,
+                doedsdato = null,
+                doed = false,
+            )
         pdlPersonService.updatePerson(aktorId, person)
     }
 
     @Test
     fun `Insert person with two aktor id (one historisk)`() {
-        val person = person(
-            listOf(Ident(
-                ident = UUID.randomUUID().toString(),
-                IDENT_GRUPPE.AKTORID,
-                historisk = true
-            ))
-        )
+        val testPerson =
+            person(
+                listOf(
+                    Ident(
+                        ident = UUID.randomUUID().toString(),
+                        IDENT_GRUPPE.AKTORID,
+                        historisk = true,
+                    )
+                )
+            )
 
-        pdlPersonService.updatePerson(person.getAktorId(), person)
-        runBlocking {
-            val person = personService.getPerson(person.getAktorId())
-            assertThat(person.identer).hasSize(2)
-        }
+        pdlPersonService.updatePerson(testPerson.getAktorId(), testPerson)
+        val person = personService.getPerson(testPerson.getAktorId())
+        person.identer.shouldHaveSize(2)
     }
 
     @Test
-    fun `Insert person where historisk aktorId is another person`() {
+    fun `Insert person where historisk aktorId is another person`() = testApplication {
         val firstPerson = person()
         pdlPersonService.updatePerson(firstPerson.getAktorId(), firstPerson)
-        val lastPerson = person(listOf(
-            Ident(
-                ident = firstPerson.getAktorId(),
-                IDENT_GRUPPE.AKTORID,
-                historisk = true
+        val lastPerson =
+            person(
+                listOf(
+                    Ident(
+                        ident = firstPerson.getAktorId(),
+                        IDENT_GRUPPE.AKTORID,
+                        historisk = true,
+                    )
+                )
             )
-        ))
         pdlPersonService.updatePerson(lastPerson.getAktorId(), lastPerson)
         assertEquals(listOf(lastPerson.getAktorId()), personRepository.getAktorIds(listOf(firstPerson.getAktorId())))
     }
 
     @Test
-    fun `Test merge person 1 and 2`() {
+    fun `Test merge person 1 and 2`() = testApplication {
         val (person1, person2, person3) = setUpTest()
 
-        var person4 = person1.copy(
-            identer = listOf(Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-                Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-                Ident("FNR3", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
-                Ident(person1.getAktorId(), IDENT_GRUPPE.AKTORID, true),
-                Ident(person2.getAktorId(), IDENT_GRUPPE.AKTORID, false))
-        )
+        var person4 =
+            person1.copy(
+                identer =
+                    listOf(
+                        Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
+                        Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
+                        Ident("FNR3", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
+                        Ident(person1.getAktorId(), IDENT_GRUPPE.AKTORID, true),
+                        Ident(person2.getAktorId(), IDENT_GRUPPE.AKTORID, false),
+                    )
+            )
 
         pdlPersonService.updatePerson(person4.getAktorId(), person4)
 
-        assertEquals(listOf(person4.getAktorId()).sorted(), personRepository.getAktorIds(listOf("FNR1", "FNR2", "FNR3", person1.getAktorId(), person2.getAktorId())).sorted())
+        assertEquals(
+            listOf(person4.getAktorId()).sorted(),
+            personRepository
+                .getAktorIds(listOf("FNR1", "FNR2", "FNR3", person1.getAktorId(), person2.getAktorId()))
+                .sorted(),
+        )
         assertEquals(listOf(person3.getAktorId()), personRepository.getAktorIds(listOf("FNR4", person3.getAktorId())))
-
     }
 
     @Test
-    fun `Test split person`() {
+    fun `Test split person`() = testApplication {
         val (person1, person2, person3) = setUpTest()
 
-        val person4 = person(
-            listOf(
-                Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-            )
-        )
+        val person4 = person(listOf(Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true)))
 
-        val person5 = person(listOf(
-            Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-        ))
-
+        val person5 = person(listOf(Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, true)))
 
         pdlPersonService.updatePerson(person4.getAktorId(), person4)
         pdlPersonService.updatePerson(person5.getAktorId(), person5)
@@ -142,22 +146,15 @@ class PdlPersonServiceTest() {
     }
 
     private fun setUpTest(): Triple<Person, Person, Person> {
-        val person1 = person(
-            listOf(
-                Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-                Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
+        val person1 =
+            person(
+                listOf(
+                    Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
+                    Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
+                )
             )
-        )
-        val person2 = person(
-            listOf(
-                Ident("FNR3", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
-            )
-        )
-        val person3 = person(
-            listOf(
-                Ident("FNR4", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
-            )
-        )
+        val person2 = person(listOf(Ident("FNR3", IDENT_GRUPPE.FOLKEREGISTERIDENT, false)))
+        val person3 = person(listOf(Ident("FNR4", IDENT_GRUPPE.FOLKEREGISTERIDENT, false)))
 
         pdlPersonService.updatePerson(person1.getAktorId(), person1)
         pdlPersonService.updatePerson(person2.getAktorId(), person2)
@@ -168,7 +165,7 @@ class PdlPersonServiceTest() {
         assertEquals(listOf(person3.getAktorId()), personRepository.getAktorIds(listOf("FNR4")))
         assertEquals(
             listOf(person1.getAktorId(), person2.getAktorId(), person3.getAktorId()).sorted(),
-            personRepository.getAktorIds(listOf("FNR1", "FNR2", "FNR3", "FNR4")).sorted()
+            personRepository.getAktorIds(listOf("FNR1", "FNR2", "FNR3", "FNR4")).sorted(),
         )
         return Triple(person1, person2, person3)
     }
@@ -180,14 +177,16 @@ private fun person(identer: List<Ident> = listOf()): Person {
             fornavn = "Fornavn",
             mellomnavn = "Mellomnavn",
             etternavn = "Etternavn",
-        ), LocalDate.of(1991, 1, 1),
-        identer = listOf(
-            Ident(
-                ident = UUID.randomUUID().toString(),
-                IDENT_GRUPPE.AKTORID,
-                historisk = false
-            )
-        ) + identer,
+        ),
+        LocalDate.of(1991, 1, 1),
+        identer =
+            listOf(
+                Ident(
+                    ident = UUID.randomUUID().toString(),
+                    IDENT_GRUPPE.AKTORID,
+                    historisk = false,
+                )
+            ) + identer,
         falskIdent = false,
         doedsdato = null,
         doed = false,

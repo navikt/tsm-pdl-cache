@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: tsm-pdl-cache-dev-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tsm-pdl-cache
+    ports:
+      - '7977:5432'
+  kafka:
+    image: confluentinc/confluent-local:8.1.0
+    container_name: tsm-pdl-cache-dev-kafka
+    ports:
+      - "9092:9092"
