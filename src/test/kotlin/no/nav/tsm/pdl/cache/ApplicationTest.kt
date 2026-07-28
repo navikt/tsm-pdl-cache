@@ -31,8 +31,7 @@ class ApplicationTest : WithPostgresAndKafka() {
         recreateTopics()
     }
 
-    @Test
-    fun `test kafka consuming`() = testApplication {
+    private suspend fun ApplicationTestBuilder.configureTest() {
         application {
             dependencies {
                 provide<Environment>() { createIntegrationEnvironment(postgres, kafka) }
@@ -42,6 +41,11 @@ class ApplicationTest : WithPostgresAndKafka() {
         }
 
         startApplication()
+    }
+
+    @Test
+    fun `test kafka consuming`() = testApplication {
+        configureTest()
 
         val aktorId = "2233445566778"
         val pdlJson = createPdlJson(aktorId = aktorId)
@@ -53,6 +57,33 @@ class ApplicationTest : WithPostgresAndKafka() {
 
         body.shouldNotBeNull()
         body.navn shouldEqual Navn(fornavn = "KARI", mellomnavn = null, etternavn = "NORDMANN")
+    }
+
+    @Test
+    fun `test kafka tombstone consuming`() = testApplication {
+        configureTest()
+
+        val aktorId = "2233445566778"
+        val pdlJson = createPdlJson(aktorId = aktorId)
+        produce("pdl.pdl-persondokument-v1", aktorId, pdlJson.toByteArray())
+
+        val client = testHttpClient()
+        val response = withTimeoutOrNull(10.seconds) { getPerson(client, "17059012345") }
+        val body = response?.body<Person>()
+
+        body.shouldNotBeNull()
+        body.navn shouldEqual Navn(fornavn = "KARI", mellomnavn = null, etternavn = "NORDMANN")
+
+        produce("pdl.pdl-persondokument-v1", aktorId, null)
+
+        delay(1000.milliseconds)
+        val nextResponse =
+            client.get("/api/person") {
+                contentType(ContentType.Application.Json)
+                header("ident", 17059012345)
+            }
+
+        nextResponse.status shouldEqual HttpStatusCode.NotFound
     }
 }
 
