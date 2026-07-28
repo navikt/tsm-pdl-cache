@@ -20,7 +20,7 @@ import no.nav.tsm.pdl.cache.pdl.Navn
 import no.nav.tsm.pdl.cache.pdl.Person
 import no.nav.tsm.pdl.cache.person.exceptions.PersonNotFoundException
 import no.nav.tsm.pdl.cache.person.exceptions.TooManyPersonException
-import no.nav.tsm.pdl.cache.plugins.configureLocalMachineTokenAuth
+import no.nav.tsm.pdl.cache.plugins.configureMachineTokenAuth
 import no.nav.tsm.pdl.cache.plugins.configureSerialization
 
 class PersonApiTest {
@@ -31,7 +31,7 @@ class PersonApiTest {
         application {
             dependencies { provide { personService } }
             configureSerialization()
-            configureLocalMachineTokenAuth()
+            configureMachineTokenAuth()
             configurePersonRoutes()
         }
 

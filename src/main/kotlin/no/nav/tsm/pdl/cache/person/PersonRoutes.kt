@@ -1,21 +1,19 @@
 package no.nav.tsm.pdl.cache.person
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.Application
-import io.ktor.server.auth.authenticate
-import io.ktor.server.plugins.di.dependencies
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
-import io.ktor.server.routing.routing
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.plugins.di.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import no.nav.tsm.ktor.auth.entra.entraMachineToken
 import no.nav.tsm.pdl.cache.person.exceptions.PersonNotFoundException
 import no.nav.tsm.pdl.cache.person.exceptions.TooManyPersonException
-import no.nav.tsm.pdl.cache.plugins.ENTRA_MACHINE_TOKEN
 
 fun Application.configurePersonRoutes() {
     val personService: PersonService by dependencies
 
     routing {
-        authenticate(ENTRA_MACHINE_TOKEN) {
+        entraMachineToken {
             get("/api/person") {
                 val ident = call.request.headers["ident"]
                 if (ident.isNullOrBlank()) {

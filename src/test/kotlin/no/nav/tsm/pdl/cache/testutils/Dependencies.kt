@@ -23,5 +23,4 @@ fun createIntegrationEnvironment(postgres: PostgreSQLContainer, kafka: Confluent
                 else mockk(),
                 pdlConsumer = KafkaPdlConsumer(longPoll = 1000.milliseconds, retryDelay = 1.seconds),
             ),
-        auth = { EntraAuth(issuer = "https://issuer", jwksUri = "https://jwks", audience = "audience") },
     )
