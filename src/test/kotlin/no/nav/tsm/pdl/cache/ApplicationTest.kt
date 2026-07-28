@@ -49,6 +49,8 @@ class ApplicationTest : WithPostgresAndKafka() {
 
         val aktorId = "2233445566778"
         val pdlJson = createPdlJson(aktorId = aktorId)
+        // Should handle multiple records on same ID
+        produce("pdl.pdl-persondokument-v1", aktorId, pdlJson.toByteArray())
         produce("pdl.pdl-persondokument-v1", aktorId, pdlJson.toByteArray())
 
         val client = testHttpClient()

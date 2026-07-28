@@ -6,15 +6,10 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 class PdlPersonService(val personRepository: PersonRepository) {
     private val logger = logger()
 
-    fun updatePerson(aktorId: String, person: Person?) = transaction {
-        if (person == null) {
-            personRepository.deletePersons(listOf(aktorId))
-            logger.info("received tombstone for aktorId: $aktorId")
-            return@transaction
-        }
-
+    fun updatePerson(aktorId: String, person: Person) = transaction {
         val aktorIds = personRepository.getAktorIds(person.identer.map { it.ident })
         if (aktorIds.isNotEmpty()) {
+            logger.debug("Found ${aktorIds.size} aktorIds for person $aktorId, deleting them")
             personRepository.deletePersons(aktorIds)
             if (aktorIds.size > 1 || aktorId != aktorIds.first()) {
                 logger.info(
@@ -23,6 +18,12 @@ class PdlPersonService(val personRepository: PersonRepository) {
             }
         }
 
+        logger.debug("Inserting person for aktorId: $aktorId, has ${person.identer.size} idents")
         personRepository.insertPerson(aktorId, person)
+    }
+
+    fun tombstonePerson(aktorId: String) = transaction {
+        personRepository.deletePersons(listOf(aktorId))
+        logger.info("received tombstone for aktorId: $aktorId")
     }
 }

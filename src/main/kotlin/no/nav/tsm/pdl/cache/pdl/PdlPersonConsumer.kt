@@ -97,31 +97,33 @@ class PdlPersonConsumer(
     @WithSpan
     private fun handleRecord(record: ConsumerRecord<String, ByteArray?>) {
         val aktorId = record.key()
-        val person =
-            record
-                .value()
-                ?.let { pdlObjectMapper.readValue<PdlPerson>(it) }
-                ?.let { pdlPerson ->
-                    if (pdlPerson.hentPerson.foedsel == null && pdlPerson.hentPerson.foedselsdato == null) {
-                        logger.info(
-                            "Received person without foedsel and foedseldato for aktor: $aktorId, offset: ${record.offset()}"
-                        )
-                        throw IllegalStateException(
-                            "Received person without foedsel and foedseldato for aktor: $aktorId, offset: ${record.offset()}"
-                        )
-                    }
-                    val (isDoed, doedsdato) = getDoedsdato(pdlPerson)
-                    Person(
-                        navn = getName(pdlPerson),
-                        foedselsdato =
-                            pdlPerson.hentPerson.foedselsdato?.firstOrNull { !it.metadata.historisk }?.foedselsdato
-                                ?: pdlPerson.hentPerson.foedsel?.firstOrNull { !it.metadata.historisk }?.foedselsdato,
-                        identer = pdlPerson.hentIdenter.identer,
-                        falskIdent = pdlPerson.hentPerson.falskIdentitet?.erFalsk ?: false,
-                        doed = isDoed,
-                        doedsdato = doedsdato,
-                    )
-                }
+        val pdlPerson = record.value()?.let { pdlObjectMapper.readValue<PdlPerson>(it) }
+        if (pdlPerson == null) {
+            pdlPersonService.tombstonePerson(aktorId)
+            return
+        }
+
+        val person = pdlPerson.let { pdlPerson ->
+            if (pdlPerson.hentPerson.foedsel == null && pdlPerson.hentPerson.foedselsdato == null) {
+                logger.info(
+                    "Received person without foedsel and foedseldato for aktor: $aktorId, offset: ${record.offset()}"
+                )
+                throw IllegalStateException(
+                    "Received person without foedsel and foedseldato for aktor: $aktorId, offset: ${record.offset()}"
+                )
+            }
+            val (isDoed, doedsdato) = getDoedsdato(pdlPerson)
+            Person(
+                navn = getName(pdlPerson),
+                foedselsdato =
+                    pdlPerson.hentPerson.foedselsdato?.firstOrNull { !it.metadata.historisk }?.foedselsdato
+                        ?: pdlPerson.hentPerson.foedsel?.firstOrNull { !it.metadata.historisk }?.foedselsdato,
+                identer = pdlPerson.hentIdenter.identer,
+                falskIdent = pdlPerson.hentPerson.falskIdentitet?.erFalsk ?: false,
+                doed = isDoed,
+                doedsdato = doedsdato,
+            )
+        }
 
         pdlPersonService.updatePerson(aktorId, person)
     }
