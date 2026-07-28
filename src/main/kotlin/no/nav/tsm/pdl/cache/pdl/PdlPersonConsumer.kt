@@ -61,7 +61,7 @@ class PdlPersonConsumer(
                         val records = consumer.poll(duration)
                         if (records.isEmpty) continue
 
-                        logger.debug("PDL consumer polled ${records.count()} records from $topicName")
+                        logger.info("PDL consumer polled ${records.count()} records from $topicName")
 
                         for (record in records) {
                             handleRecord(record)
