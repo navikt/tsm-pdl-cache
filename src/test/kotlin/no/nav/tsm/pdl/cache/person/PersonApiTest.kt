@@ -92,21 +92,6 @@ class PersonApiTest {
         person.foedselsdato shouldEqual LocalDate.of(1991, 1, 1)
         person.identer.size shouldEqual 4
     }
-
-    /*
-
-    @Test
-    fun testGetPersonTestPerson() {
-        Mockito.`when`(personService.getPerson("13116900216"))
-            .thenAnswer { throw PersonNotFoundException("Test person"); }
-        val result =
-            webTestClient.get().uri("/api/person")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer ${JwtUtil.createJwt()}")
-                .header("ident", "13116900216").exchange().returnResult(Person::class.java)
-        assertEquals(HttpStatus.NOT_FOUND.value(), result.status.value())
-    }
-
-     */
 }
 
 private fun ApplicationTestBuilder.testHttpClient(): HttpClient {
