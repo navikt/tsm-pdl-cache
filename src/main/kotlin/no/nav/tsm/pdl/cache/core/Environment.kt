@@ -25,13 +25,10 @@ class PostgresConfig(
     val password: String,
 )
 
-class EntraAuth(val issuer: String, val jwksUri: String, val audience: String)
-
 class Environment(
     val runtime: Runtime,
     val kafka: KafkaConfig,
     val postgres: PostgresConfig,
-    val auth: () -> EntraAuth,
 )
 
 fun initializeEnvironment(config: ApplicationConfig): Environment {
@@ -61,12 +58,5 @@ fun initializeEnvironment(config: ApplicationConfig): Environment {
                 username = config.property("postgres.username").getString(),
                 password = config.property("postgres.password").getString(),
             ),
-        auth = {
-            EntraAuth(
-                audience = config.property("auth.entra.audience").getString(),
-                jwksUri = config.property("auth.entra.openid.jwks").getString(),
-                issuer = config.property("auth.entra.openid.issuer").getString(),
-            )
-        },
     )
 }

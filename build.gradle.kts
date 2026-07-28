@@ -66,7 +66,8 @@ dependencies {
     implementation(libs.flyway.core)
 
     implementation(libs.tsm.sykmeldinger.input)
-    implementation(libs.tsm.ktor)
+    implementation(tsmKtorLibs.core)
+    implementation(tsmKtorLibs.auth)
 
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
