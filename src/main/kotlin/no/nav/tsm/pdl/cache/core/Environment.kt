@@ -1,4 +1,4 @@
-package no.nav.tsm.pdl.cache.testutils
+package no.nav.tsm.pdl.cache.core
 
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.config.getAs

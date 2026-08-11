@@ -5,6 +5,11 @@ import java.util.*
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import no.nav.tsm.ktor.nais.RuntimeCluster
+import no.nav.tsm.pdl.cache.core.Environment
+import no.nav.tsm.pdl.cache.core.KafkaConfig
+import no.nav.tsm.pdl.cache.core.KafkaPdlConsumer
+import no.nav.tsm.pdl.cache.core.PostgresConfig
+import no.nav.tsm.pdl.cache.core.Runtime
 import org.testcontainers.kafka.ConfluentKafkaContainer
 import org.testcontainers.postgresql.PostgreSQLContainer
 

@@ -1,6 +1,5 @@
 package no.nav.tsm.pdl.cache
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.kotest.matchers.equals.shouldEqual
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.ktor.client.*
@@ -9,7 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.jackson.*
+import io.ktor.serialization.jackson3.jackson
 import io.ktor.server.plugins.di.*
 import io.ktor.server.testing.*
 import kotlin.test.BeforeTest
@@ -18,13 +17,16 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
+import no.nav.tsm.ktor.logger
+import no.nav.tsm.pdl.cache.core.Environment
 import no.nav.tsm.pdl.cache.pdl.Navn
 import no.nav.tsm.pdl.cache.pdl.Person
-import no.nav.tsm.pdl.cache.testutils.Environment
 import no.nav.tsm.pdl.cache.testutils.WithPostgresAndKafka
 import no.nav.tsm.pdl.cache.testutils.createIntegrationEnvironment
 
 class ApplicationTest : WithPostgresAndKafka() {
+
+    val logger = logger()
 
     @BeforeTest
     fun setup() {
@@ -34,7 +36,7 @@ class ApplicationTest : WithPostgresAndKafka() {
     private suspend fun ApplicationTestBuilder.configureTest() {
         application {
             dependencies {
-                provide<Environment>() { createIntegrationEnvironment(postgres, kafka) }
+                provide<Environment>() { createIntegrationEnvironment(postgres, kafka.container) }
             }
 
             module()
@@ -87,30 +89,28 @@ class ApplicationTest : WithPostgresAndKafka() {
 
         nextResponse.status shouldEqual HttpStatusCode.NotFound
     }
-}
 
-private suspend fun getPerson(client: HttpClient, ident: String): HttpResponse {
-    val response =
-        client.get("/api/person") {
-            contentType(ContentType.Application.Json)
-            header("ident", ident)
+    private suspend fun getPerson(client: HttpClient, ident: String): HttpResponse {
+        val response =
+            client.get("/api/person") {
+                contentType(ContentType.Application.Json)
+                header("ident", ident)
+            }
+
+        return if (response.status == HttpStatusCode.NotFound) {
+            logger.debug("Person not found yet, retrying...")
+            delay(1000.milliseconds)
+            getPerson(client, ident)
+        } else {
+            response
         }
-
-    return if (response.status == HttpStatusCode.NotFound) {
-        println("Person not found yet, retrying...")
-        delay(1000.milliseconds)
-        getPerson(client, ident)
-    } else {
-        response
     }
 }
 
 private fun ApplicationTestBuilder.testHttpClient(): HttpClient {
     return createClient {
         install(ContentNegotiation) {
-            jackson {
-                registerModule(JavaTimeModule())
-            }
+            jackson {}
         }
     }
 }

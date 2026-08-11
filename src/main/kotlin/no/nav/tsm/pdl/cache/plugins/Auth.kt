@@ -5,6 +5,7 @@ import no.nav.tsm.ktor.auth.entra.EntraAuth
 
 fun Application.configureMachineTokenAuth() {
     install(EntraAuth) {
+        machine = true
         autoStub = true
     }
 }

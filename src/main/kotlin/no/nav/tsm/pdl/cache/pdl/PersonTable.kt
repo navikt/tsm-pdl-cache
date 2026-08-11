@@ -1,11 +1,11 @@
 package no.nav.tsm.pdl.cache.pdl
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.tsm.pdl.cache.core.exposedObjectMapper
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.javatime.date
 import org.jetbrains.exposed.v1.json.jsonb
+import tools.jackson.module.kotlin.readValue
 
 object PersonTable : Table("person") {
     val aktorId = text("aktor_id")

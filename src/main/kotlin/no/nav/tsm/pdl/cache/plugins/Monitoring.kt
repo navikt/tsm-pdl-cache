@@ -1,23 +1,12 @@
 package no.nav.tsm.pdl.cache.plugins
 
-import dev.hayden.KHealth
 import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.metrics.micrometer.MicrometerMetrics
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.micrometer.core.instrument.Metrics
-import io.micrometer.prometheusmetrics.PrometheusConfig
-import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import no.nav.tsm.ktor.nais.NaisMonitoring
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 fun Application.configureMonitoring() {
-    configureMicrometer()
-
-    install(KHealth) {
-        healthChecks { healthCheckPath = "/internal/health/alive" }
-        readyChecks {
-            readyCheckPath = "/internal/health/ready"
+    install(NaisMonitoring) {
+        ready {
             check("database ready") {
                 try {
                     transaction { exec("SELECT 1") }
@@ -28,16 +17,4 @@ fun Application.configureMonitoring() {
             }
         }
     }
-    install(ShutDownUrl.ApplicationCallPlugin) {
-        shutDownUrl = "/internal/shutdown"
-        exitCodeSupplier = { 0 }
-    }
-}
-
-private fun Application.configureMicrometer() {
-    val appRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
-    Metrics.addRegistry(appRegistry)
-
-    install(MicrometerMetrics) { registry = appRegistry }
-    routing { get("/internal/metrics") { call.respond(appRegistry.scrape()) } }
 }

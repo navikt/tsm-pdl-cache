@@ -1,10 +1,5 @@
 package no.nav.tsm.pdl.cache.pdl
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.server.application.Application
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import java.time.Duration
@@ -19,12 +14,15 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import no.nav.tsm.ktor.logger
-import no.nav.tsm.pdl.cache.testutils.Environment
+import no.nav.tsm.pdl.cache.core.Environment
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.module.kotlin.jacksonMapperBuilder
+import tools.jackson.module.kotlin.readValue
 
 class PdlPersonConsumer(
     environment: Environment,
@@ -138,12 +136,8 @@ class PdlPersonConsumer(
             false to null
         }
 
-    private val pdlObjectMapper: ObjectMapper =
-        jacksonObjectMapper().apply {
-            registerModule(JavaTimeModule())
-            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
-        }
+    private val pdlObjectMapper =
+        jacksonMapperBuilder().enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT).build()
 }
 
 private fun getName(pdlPerson: PdlPerson): Navn? =

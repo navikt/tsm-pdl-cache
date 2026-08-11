@@ -1,13 +1,12 @@
 package no.nav.tsm.pdl.cache.person
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.kotest.matchers.equals.shouldEqual
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.jackson.*
+import io.ktor.serialization.jackson3.jackson
 import io.ktor.server.plugins.di.*
 import io.ktor.server.testing.*
 import io.mockk.every
@@ -97,9 +96,7 @@ class PersonApiTest {
 private fun ApplicationTestBuilder.testHttpClient(): HttpClient {
     return createClient {
         install(ContentNegotiation) {
-            jackson {
-                registerModule(JavaTimeModule())
-            }
+            jackson {}
         }
     }
 }

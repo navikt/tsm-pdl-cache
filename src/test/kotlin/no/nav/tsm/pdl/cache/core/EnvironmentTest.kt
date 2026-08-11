@@ -3,7 +3,6 @@ package no.nav.tsm.pdl.cache.core
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.HoconApplicationConfig
 import kotlin.test.Test
-import no.nav.tsm.pdl.cache.testutils.initializeEnvironment
 
 class EnvironmentTest {
     @Test
