@@ -1,7 +1,7 @@
 rootProject.name = "tsm-pdl-cache"
 
 val ktorVersion = "3.5.1"
-val tsmKtorVersion = "1.2.6"
+val tsmKtorVersion = "1.2.10"
 
 dependencyResolutionManagement {
     repositories {
