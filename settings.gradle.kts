@@ -1,7 +1,10 @@
 rootProject.name = "tsm-pdl-cache"
 
+include(":core")
+include(":client")
+
 val ktorVersion = "3.5.1"
-val tsmKtorVersion = "1.2.11"
+val tsmKtorVersion = "1.2.12"
 
 dependencyResolutionManagement {
     repositories {
@@ -15,11 +18,14 @@ dependencyResolutionManagement {
     }
 }
 
-
 pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
         maven("https://jitpack.io")
     }
+}
+
+plugins {
+    id("io.github.ben-manes.versions.settings") version "0.61.0"
 }

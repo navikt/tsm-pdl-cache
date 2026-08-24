@@ -13,7 +13,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import no.nav.tsm.ktor.core.SimpleNavn
 import no.nav.tsm.ktor.logger
+import no.nav.tsm.pdl.Person
 import no.nav.tsm.pdl.cache.core.Environment
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -140,13 +142,13 @@ class PdlPersonConsumer(
         jacksonMapperBuilder().enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT).build()
 }
 
-private fun getName(pdlPerson: PdlPerson): Navn? =
+private fun getName(pdlPerson: PdlPerson): SimpleNavn? =
     pdlPerson.hentPerson.navn
         .filter { !it.metadata.historisk }
         .sortedByDescending { it.gyldigFraOgMed }
         .firstOrNull()
         ?.let {
-            Navn(
+            SimpleNavn(
                 fornavn = it.fornavn,
                 mellomnavn = it.mellomnavn,
                 etternavn = it.etternavn,

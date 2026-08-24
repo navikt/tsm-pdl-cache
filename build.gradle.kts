@@ -1,10 +1,7 @@
-import com.diffplug.gradle.spotless.SpotlessExtension
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(ktorLibs.plugins.ktor)
     alias(libs.plugins.spotless)
-    alias(libs.plugins.gradle.versions)
     alias(libs.plugins.flyway)
 }
 
@@ -27,19 +24,22 @@ tasks {
             into("/")
         }
     }
+}
 
-    configure<SpotlessExtension> {
-        kotlin { ktfmt("0.64").kotlinlangStyle().configure {
+spotless {
+    kotlin {
+        target("**/src/**/*.kt")
+        targetExclude("**/build/**")
+        ktfmt(libs.versions.ktfmt.get()).kotlinlangStyle().configure {
             it.setMaxWidth(120)
             it.setContinuationIndent(4)
-        } }
-        check {
-            dependsOn("spotlessApply")
         }
     }
 }
 
+
 dependencies {
+    implementation(project(":core"))
     implementation(ktorLibs.serialization.jackson3)
     implementation(ktorLibs.server.contentNegotiation)
     implementation(ktorLibs.server.core)

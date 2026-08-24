@@ -6,9 +6,14 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import no.nav.tsm.ktor.core.SimpleNavn
+import no.nav.tsm.pdl.Ident
+import no.nav.tsm.pdl.IdentGruppe
+import no.nav.tsm.pdl.Person
 import no.nav.tsm.pdl.cache.person.PersonService
 import no.nav.tsm.pdl.cache.person.mapToPersons
 import no.nav.tsm.pdl.cache.testutils.WithPostgresql
+import no.nav.tsm.pdl.getAktorId
 
 class PdlPersonServiceTest : WithPostgresql() {
     companion object {
@@ -35,7 +40,7 @@ class PdlPersonServiceTest : WithPostgresql() {
         val aktorId = UUID.randomUUID().toString()
         val person =
             Person(
-                Navn(
+                SimpleNavn(
                     fornavn = "Fornavn",
                     mellomnavn = "Mellomnavn",
                     etternavn = "Etternavn",
@@ -45,7 +50,7 @@ class PdlPersonServiceTest : WithPostgresql() {
                     listOf(
                         Ident(
                             ident = aktorId,
-                            IDENT_GRUPPE.AKTORID,
+                            IdentGruppe.AKTORID,
                             historisk = false,
                         )
                     ),
@@ -63,7 +68,7 @@ class PdlPersonServiceTest : WithPostgresql() {
                 listOf(
                     Ident(
                         ident = UUID.randomUUID().toString(),
-                        IDENT_GRUPPE.AKTORID,
+                        IdentGruppe.AKTORID,
                         historisk = true,
                     )
                 )
@@ -83,7 +88,7 @@ class PdlPersonServiceTest : WithPostgresql() {
                 listOf(
                     Ident(
                         ident = firstPerson.getAktorId(),
-                        IDENT_GRUPPE.AKTORID,
+                        IdentGruppe.AKTORID,
                         historisk = true,
                     )
                 )
@@ -100,11 +105,11 @@ class PdlPersonServiceTest : WithPostgresql() {
             person1.copy(
                 identer =
                     listOf(
-                        Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-                        Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-                        Ident("FNR3", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
-                        Ident(person1.getAktorId(), IDENT_GRUPPE.AKTORID, true),
-                        Ident(person2.getAktorId(), IDENT_GRUPPE.AKTORID, false),
+                        Ident("FNR1", IdentGruppe.FOLKEREGISTERIDENT, true),
+                        Ident("FNR2", IdentGruppe.FOLKEREGISTERIDENT, true),
+                        Ident("FNR3", IdentGruppe.FOLKEREGISTERIDENT, false),
+                        Ident(person1.getAktorId(), IdentGruppe.AKTORID, true),
+                        Ident(person2.getAktorId(), IdentGruppe.AKTORID, false),
                     )
             )
 
@@ -123,9 +128,9 @@ class PdlPersonServiceTest : WithPostgresql() {
     fun `Test split person`() = testApplication {
         val (person1, person2, person3) = setUpTest()
 
-        val person4 = person(listOf(Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true)))
+        val person4 = person(listOf(Ident("FNR1", IdentGruppe.FOLKEREGISTERIDENT, true)))
 
-        val person5 = person(listOf(Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, true)))
+        val person5 = person(listOf(Ident("FNR2", IdentGruppe.FOLKEREGISTERIDENT, true)))
 
         pdlPersonService.updatePerson(person4.getAktorId(), person4)
         pdlPersonService.updatePerson(person5.getAktorId(), person5)
@@ -149,12 +154,12 @@ class PdlPersonServiceTest : WithPostgresql() {
         val person1 =
             person(
                 listOf(
-                    Ident("FNR1", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-                    Ident("FNR2", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
+                    Ident("FNR1", IdentGruppe.FOLKEREGISTERIDENT, true),
+                    Ident("FNR2", IdentGruppe.FOLKEREGISTERIDENT, false),
                 )
             )
-        val person2 = person(listOf(Ident("FNR3", IDENT_GRUPPE.FOLKEREGISTERIDENT, false)))
-        val person3 = person(listOf(Ident("FNR4", IDENT_GRUPPE.FOLKEREGISTERIDENT, false)))
+        val person2 = person(listOf(Ident("FNR3", IdentGruppe.FOLKEREGISTERIDENT, false)))
+        val person3 = person(listOf(Ident("FNR4", IdentGruppe.FOLKEREGISTERIDENT, false)))
 
         pdlPersonService.updatePerson(person1.getAktorId(), person1)
         pdlPersonService.updatePerson(person2.getAktorId(), person2)
@@ -173,7 +178,7 @@ class PdlPersonServiceTest : WithPostgresql() {
 
 private fun person(identer: List<Ident> = listOf()): Person {
     return Person(
-        Navn(
+        SimpleNavn(
             fornavn = "Fornavn",
             mellomnavn = "Mellomnavn",
             etternavn = "Etternavn",
@@ -183,7 +188,7 @@ private fun person(identer: List<Ident> = listOf()): Person {
             listOf(
                 Ident(
                     ident = UUID.randomUUID().toString(),
-                    IDENT_GRUPPE.AKTORID,
+                    IdentGruppe.AKTORID,
                     historisk = false,
                 )
             ) + identer,
