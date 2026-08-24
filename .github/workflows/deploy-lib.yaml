@@ -2,7 +2,7 @@ name: Deploy library
 
 on:
   push:
-    branches: [main, dev/client-lib]
+    branches: [main]
     paths:
       - 'client/**'
       - '.github/workflows/deploy-lib.yaml'
