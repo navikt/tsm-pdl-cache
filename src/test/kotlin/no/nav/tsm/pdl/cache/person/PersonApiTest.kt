@@ -13,10 +13,10 @@ import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import kotlin.test.Test
-import no.nav.tsm.pdl.cache.pdl.IDENT_GRUPPE
-import no.nav.tsm.pdl.cache.pdl.Ident
-import no.nav.tsm.pdl.cache.pdl.Navn
-import no.nav.tsm.pdl.cache.pdl.Person
+import no.nav.tsm.ktor.core.SimpleNavn
+import no.nav.tsm.pdl.Ident
+import no.nav.tsm.pdl.IdentGruppe
+import no.nav.tsm.pdl.Person
 import no.nav.tsm.pdl.cache.person.exceptions.PersonNotFoundException
 import no.nav.tsm.pdl.cache.person.exceptions.TooManyPersonException
 import no.nav.tsm.pdl.cache.plugins.configureMachineTokenAuth
@@ -65,14 +65,14 @@ class PersonApiTest {
 
         every { personService.getPerson("123") } returns
             Person(
-                navn = Navn("Fornavn", "Mellomnavn", "Etternavn"),
+                navn = SimpleNavn("Fornavn", "Mellomnavn", "Etternavn"),
                 foedselsdato = LocalDate.of(1991, 1, 1),
                 identer =
                     listOf(
-                        Ident("aktorId", IDENT_GRUPPE.AKTORID, false),
-                        Ident("123", IDENT_GRUPPE.FOLKEREGISTERIDENT, false),
-                        Ident("321", IDENT_GRUPPE.FOLKEREGISTERIDENT, true),
-                        Ident("npid", IDENT_GRUPPE.NPID, false),
+                        Ident("aktorId", IdentGruppe.AKTORID, false),
+                        Ident("123", IdentGruppe.FOLKEREGISTERIDENT, false),
+                        Ident("321", IdentGruppe.FOLKEREGISTERIDENT, true),
+                        Ident("npid", IdentGruppe.NPID, false),
                     ),
                 falskIdent = false,
                 doedsdato = null,

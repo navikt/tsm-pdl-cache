@@ -1,15 +1,14 @@
 package no.nav.tsm.pdl.cache.person
 
-import no.nav.tsm.pdl.cache.pdl.IDENT_GRUPPE
-import no.nav.tsm.pdl.cache.pdl.Ident
-import no.nav.tsm.pdl.cache.pdl.Person
+import no.nav.tsm.pdl.Ident
+import no.nav.tsm.pdl.IdentGruppe
+import no.nav.tsm.pdl.Person
 import no.nav.tsm.pdl.cache.pdl.PersonDbResult
 import no.nav.tsm.pdl.cache.pdl.PersonRepository
 import no.nav.tsm.pdl.cache.person.exceptions.PersonNotFoundException
 import no.nav.tsm.pdl.cache.person.exceptions.TooManyPersonException
 
 class PersonService(private val personRepository: PersonRepository) {
-
     fun getPerson(ident: String): Person {
         val persons = mapToPersons(personRepository.getPerson(ident))
         if (persons.size > 1) {
@@ -38,7 +37,7 @@ fun mapToPersons(list: List<PersonDbResult>): List<Person> {
         .map {
             val aktorIdIdent =
                 it.value.find { ident ->
-                    ident.ident == it.key && ident.gruppe == IDENT_GRUPPE.AKTORID && !ident.historisk
+                    ident.ident == it.key && ident.gruppe == IdentGruppe.AKTORID && !ident.historisk
                 }
             if (aktorIdIdent == null) {
                 throw IllegalStateException("Fant ikke aktorId i PDL")

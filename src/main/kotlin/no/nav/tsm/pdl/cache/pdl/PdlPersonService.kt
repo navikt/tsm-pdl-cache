@@ -1,6 +1,7 @@
 package no.nav.tsm.pdl.cache.pdl
 
 import no.nav.tsm.ktor.logger
+import no.nav.tsm.pdl.Person
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class PdlPersonService(val personRepository: PersonRepository) {

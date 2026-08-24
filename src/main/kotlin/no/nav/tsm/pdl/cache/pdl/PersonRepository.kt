@@ -1,6 +1,9 @@
 package no.nav.tsm.pdl.cache.pdl
 
 import java.time.LocalDate
+import no.nav.tsm.ktor.core.SimpleNavn
+import no.nav.tsm.pdl.IdentGruppe
+import no.nav.tsm.pdl.Person
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.jdbc.batchInsert
@@ -11,12 +14,12 @@ import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 data class PersonDbResult(
-    val navn: Navn?,
+    val navn: SimpleNavn?,
     val fodselsdato: LocalDate?,
     val aktorId: String,
     val ident: String,
     val historisk: Boolean,
-    val gruppe: IDENT_GRUPPE,
+    val gruppe: IdentGruppe,
     val falskIdent: Boolean,
     val doed: Boolean,
     val doedsdato: LocalDate?,
@@ -52,7 +55,7 @@ class PersonRepository {
                     aktorId = it[PersonTable.aktorId],
                     ident = it[IdentTable.ident],
                     historisk = it[IdentTable.historisk],
-                    gruppe = IDENT_GRUPPE.valueOf(it[IdentTable.gruppe]),
+                    gruppe = IdentGruppe.valueOf(it[IdentTable.gruppe]),
                     falskIdent = it[PersonTable.falskIdentitet],
                     doed = it[PersonTable.doed],
                     doedsdato = it[PersonTable.doedsdato],
@@ -71,7 +74,7 @@ class PersonRepository {
                     aktorId = it[PersonTable.aktorId],
                     ident = it[IdentTable.ident],
                     historisk = it[IdentTable.historisk],
-                    gruppe = IDENT_GRUPPE.valueOf(it[IdentTable.gruppe]),
+                    gruppe = IdentGruppe.valueOf(it[IdentTable.gruppe]),
                     falskIdent = it[PersonTable.falskIdentitet],
                     doed = it[PersonTable.doed],
                     doedsdato = it[PersonTable.doedsdato],

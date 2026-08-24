@@ -1,33 +1,8 @@
 package no.nav.tsm.pdl.cache.pdl
 
 import java.time.LocalDate
-
-enum class IDENT_GRUPPE {
-    AKTORID,
-    FOLKEREGISTERIDENT,
-    NPID,
-}
-
-data class Ident(
-    val ident: String,
-    val gruppe: IDENT_GRUPPE,
-    val historisk: Boolean,
-)
-
-data class Navn(
-    val fornavn: String,
-    val mellomnavn: String?,
-    val etternavn: String,
-)
-
-data class Person(
-    val navn: Navn?,
-    val foedselsdato: LocalDate?,
-    val identer: List<Ident>,
-    val falskIdent: Boolean,
-    val doed: Boolean,
-    val doedsdato: LocalDate?,
-)
+import no.nav.tsm.pdl.Ident
+import no.nav.tsm.pdl.Metadata
 
 data class PdlNavn(
     val fornavn: String,
@@ -63,7 +38,3 @@ data class Foedselsdato(
     val foedselsdato: LocalDate?,
     val metadata: Metadata,
 )
-
-data class Metadata(val historisk: Boolean, val master: String)
-
-fun Person.getAktorId() = identer.single { it.gruppe == IDENT_GRUPPE.AKTORID && !it.historisk }.ident

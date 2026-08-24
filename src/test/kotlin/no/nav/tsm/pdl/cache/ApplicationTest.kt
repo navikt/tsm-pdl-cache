@@ -17,10 +17,10 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
+import no.nav.tsm.ktor.core.SimpleNavn
 import no.nav.tsm.ktor.logger
+import no.nav.tsm.pdl.Person
 import no.nav.tsm.pdl.cache.core.Environment
-import no.nav.tsm.pdl.cache.pdl.Navn
-import no.nav.tsm.pdl.cache.pdl.Person
 import no.nav.tsm.pdl.cache.testutils.WithPostgresAndKafka
 import no.nav.tsm.pdl.cache.testutils.createIntegrationEnvironment
 
@@ -60,7 +60,7 @@ class ApplicationTest : WithPostgresAndKafka() {
         val body = response?.body<Person>()
 
         body.shouldNotBeNull()
-        body.navn shouldEqual Navn(fornavn = "KARI", mellomnavn = null, etternavn = "NORDMANN")
+        body.navn shouldEqual SimpleNavn(fornavn = "KARI", mellomnavn = null, etternavn = "NORDMANN")
     }
 
     @Test
@@ -76,7 +76,7 @@ class ApplicationTest : WithPostgresAndKafka() {
         val body = response?.body<Person>()
 
         body.shouldNotBeNull()
-        body.navn shouldEqual Navn(fornavn = "KARI", mellomnavn = null, etternavn = "NORDMANN")
+        body.navn shouldEqual SimpleNavn(fornavn = "KARI", mellomnavn = null, etternavn = "NORDMANN")
 
         produce("pdl.pdl-persondokument-v1", aktorId, null)
 

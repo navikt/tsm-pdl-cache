@@ -1,5 +1,6 @@
 package no.nav.tsm.pdl.cache.pdl
 
+import no.nav.tsm.ktor.core.SimpleNavn
 import no.nav.tsm.pdl.cache.core.exposedObjectMapper
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.Table
@@ -14,7 +15,7 @@ object PersonTable : Table("person") {
         jsonb(
                 "navn",
                 { exposedObjectMapper.writeValueAsString(it) },
-                { exposedObjectMapper.readValue<Navn>(it) },
+                { exposedObjectMapper.readValue<SimpleNavn>(it) },
             )
             .nullable()
     val falskIdentitet = bool("falsk_identitet")

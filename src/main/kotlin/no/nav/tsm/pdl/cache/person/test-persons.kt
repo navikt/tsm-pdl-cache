@@ -1,6 +1,6 @@
 package no.nav.tsm.pdl.cache.person
 
-import no.nav.tsm.pdl.cache.pdl.Person
+import no.nav.tsm.pdl.Person
 
 fun isTestPerson(person: Person): Boolean {
     return person.identer.any { testFNR.contains(it.ident) }

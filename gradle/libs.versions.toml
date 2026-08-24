@@ -14,6 +14,9 @@ kotest-assertions = "6.2.2"
 mockk = "1.14.11"
 testcontainers = "2.0.5"
 
+spotless = "8.8.0"
+ktfmt = "0.64"
+
 [libraries]
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logbackEncoder" }
@@ -40,5 +43,4 @@ testcontainers-kafka = { module = "org.testcontainers:testcontainers-kafka", ver
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
-spotless = { id = "com.diffplug.spotless", version = "8.8.0" }
-gradle-versions = { id = "com.github.ben-manes.versions", version = "0.54.0" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
