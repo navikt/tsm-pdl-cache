@@ -4,6 +4,7 @@
     "commit": false,
     "requireBranch": "main",
     "requireCommits": true,
+    "requireCommitsFail": false,
     "commitsPath": "client",
     "tagName": "v${version}"
   },
