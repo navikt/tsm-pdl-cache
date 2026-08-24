@@ -26,7 +26,7 @@ publishing {
         create<MavenPublication>("gpr") {
             from(components["java"])
             groupId = "no.nav.tsm"
-            artifactId = "pdl-cache"
+            artifactId = "pdl-client"
             version = version
         }
     }
