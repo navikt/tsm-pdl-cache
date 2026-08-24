@@ -1,6 +1,5 @@
 rootProject.name = "tsm-pdl-cache"
 
-include(":core")
 include(":client")
 
 val ktorVersion = "3.5.1"

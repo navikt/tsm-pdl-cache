@@ -39,7 +39,7 @@ spotless {
 
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":client"))
     implementation(ktorLibs.serialization.jackson3)
     implementation(ktorLibs.server.contentNegotiation)
     implementation(ktorLibs.server.core)

@@ -14,9 +14,6 @@ java {
 dependencies {
     api(tsmKtorLibs.core)
 
-    // Shared data classes from core, these are not published, consumed through this lib
-    implementation(project(":core"))
-
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
     testImplementation(ktorLibs.client.mock)
