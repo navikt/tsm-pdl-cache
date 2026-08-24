@@ -2,7 +2,6 @@ package no.nav.tsm.pdl.cache.pdl
 
 import java.time.LocalDate
 import no.nav.tsm.pdl.Ident
-import no.nav.tsm.pdl.Metadata
 
 data class PdlNavn(
     val fornavn: String,
@@ -31,6 +30,8 @@ data class PdlPerson(
     val hentPerson: HentPerson,
     val hentIdenter: HentIdenter,
 )
+
+data class Metadata(val historisk: Boolean, val master: String)
 
 data class HentIdenter(val identer: List<Ident>)
 

@@ -24,6 +24,4 @@ data class Person(
     val doedsdato: LocalDate?,
 )
 
-data class Metadata(val historisk: Boolean, val master: String)
-
 fun Person.getAktorId() = identer.single { it.gruppe == IdentGruppe.AKTORID && !it.historisk }.ident
