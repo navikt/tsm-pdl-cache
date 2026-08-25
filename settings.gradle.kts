@@ -3,7 +3,7 @@ rootProject.name = "tsm-pdl-cache"
 include(":client")
 
 val ktorVersion = "3.5.2"
-val tsmKtorVersion = "1.2.12"
+val tsmKtorVersion = "1.2.13"
 
 dependencyResolutionManagement {
     repositories {

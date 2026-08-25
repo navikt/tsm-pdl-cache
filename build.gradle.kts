@@ -46,15 +46,9 @@ dependencies {
     implementation(ktorLibs.server.di)
     implementation(ktorLibs.server.netty)
     implementation(ktorLibs.server.metrics.micrometer)
-    implementation(ktorLibs.server.auth)
-    implementation(ktorLibs.server.auth.jwt)
     implementation(ktorLibs.client.core)
     implementation(ktorLibs.client.apache5)
     implementation(ktorLibs.client.contentNegotiation)
-
-    implementation(libs.kafka.client)
-    implementation(libs.logback.classic)
-    implementation(libs.logback.encoder)
 
     implementation(libs.postgresql)
     implementation(libs.exposed.core)
@@ -67,9 +61,10 @@ dependencies {
     implementation(libs.tsm.sykmeldinger.input)
     implementation(tsmKtorLibs.core)
     implementation(tsmKtorLibs.auth)
+    implementation(tsmKtorLibs.kafka)
 
-    testImplementation(tsmKtorLibs.kafka.test)
     testImplementation(kotlin("test"))
+    testImplementation(tsmKtorLibs.kafka.test)
     testImplementation(ktorLibs.server.testHost)
     testImplementation(ktorLibs.client.mock)
     testImplementation(libs.kotest.assertions)

@@ -1,15 +1,9 @@
 package no.nav.tsm.pdl.cache
 
-import io.ktor.server.application.Application
-import io.ktor.server.application.ApplicationStarted
-import io.ktor.server.plugins.di.dependencies
-import no.nav.tsm.pdl.cache.pdl.PdlPersonConsumer
+import io.ktor.server.application.*
+import no.nav.tsm.pdl.cache.pdl.configurePdlConsumer
 import no.nav.tsm.pdl.cache.person.configurePersonRoutes
-import no.nav.tsm.pdl.cache.plugins.configureDatabase
-import no.nav.tsm.pdl.cache.plugins.configureDependencyInjection
-import no.nav.tsm.pdl.cache.plugins.configureMachineTokenAuth
-import no.nav.tsm.pdl.cache.plugins.configureMonitoring
-import no.nav.tsm.pdl.cache.plugins.configureSerialization
+import no.nav.tsm.pdl.cache.plugins.*
 
 fun Application.module() {
     configureDependencyInjection()
@@ -18,10 +12,6 @@ fun Application.module() {
     configureMonitoring()
     configureDatabase()
 
+    configurePdlConsumer()
     configurePersonRoutes()
-
-    val consumer: PdlPersonConsumer by dependencies
-    monitor.subscribe(ApplicationStarted) {
-        with(consumer) { consume() }
-    }
 }

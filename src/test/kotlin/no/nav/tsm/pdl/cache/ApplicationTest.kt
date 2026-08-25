@@ -8,7 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.jackson3.jackson
+import io.ktor.serialization.jackson3.*
 import io.ktor.server.plugins.di.*
 import io.ktor.server.testing.*
 import kotlin.test.BeforeTest
@@ -25,7 +25,6 @@ import no.nav.tsm.pdl.cache.testutils.WithPostgresAndKafka
 import no.nav.tsm.pdl.cache.testutils.createIntegrationEnvironment
 
 class ApplicationTest : WithPostgresAndKafka() {
-
     val logger = logger()
 
     @BeforeTest
@@ -34,9 +33,11 @@ class ApplicationTest : WithPostgresAndKafka() {
     }
 
     private suspend fun ApplicationTestBuilder.configureTest() {
+        kafka.configureKafka(this)
+
         application {
             dependencies {
-                provide<Environment>() { createIntegrationEnvironment(postgres, kafka.container) }
+                provide<Environment>() { createIntegrationEnvironment(postgres) }
             }
 
             module()

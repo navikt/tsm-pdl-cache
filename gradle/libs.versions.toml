@@ -1,8 +1,5 @@
 [versions]
 kotlin = "2.4.10"
-logback = "1.6.3"
-logbackEncoder = "9.0"
-kafka = "4.3.1"
 
 flyway = "13.3.0"
 exposed = "1.4.0"
@@ -18,10 +15,6 @@ spotless = "8.10.0"
 ktfmt = "0.64"
 
 [libraries]
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logbackEncoder" }
-kafka-client = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka" }
-
 # Database
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
