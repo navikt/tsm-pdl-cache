@@ -1,68 +1,76 @@
 package no.nav.tsm.pdl.cache.person
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.equals.shouldEqual
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.jackson3.jackson
+import io.ktor.client.HttpClient
 import io.ktor.server.plugins.di.*
 import io.ktor.server.testing.*
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import kotlin.test.Test
+import no.nav.tsm.ktor.auth.texas.Texas
 import no.nav.tsm.ktor.core.SimpleNavn
 import no.nav.tsm.pdl.Ident
 import no.nav.tsm.pdl.IdentGruppe
+import no.nav.tsm.pdl.PdlClient
+import no.nav.tsm.pdl.PdlCloudClient
+import no.nav.tsm.pdl.PdlCloudConfig
 import no.nav.tsm.pdl.Person
 import no.nav.tsm.pdl.cache.person.exceptions.PersonNotFoundException
 import no.nav.tsm.pdl.cache.person.exceptions.TooManyPersonException
 import no.nav.tsm.pdl.cache.plugins.configureMachineTokenAuth
 import no.nav.tsm.pdl.cache.plugins.configureSerialization
 
-class PersonApiTest {
-
+class PersonRoutesTest {
     val personService = mockk<PersonService>()
+    val texas = mockk<Texas>(relaxed = true)
 
-    private fun ApplicationTestBuilder.configureRoutes(): HttpClient {
+    private suspend fun ApplicationTestBuilder.configureRoutes(): PdlClient {
+        val client = createClient {}
+
         application {
-            dependencies { provide { personService } }
+            dependencies {
+                provide<HttpClient> { client }
+                provide<PersonService> { personService }
+                provide<Texas> { texas }
+                provide<PdlCloudConfig> { PdlCloudConfig(url = "") }
+                provide<PdlClient>(PdlCloudClient::class)
+            }
             configureSerialization()
             configureMachineTokenAuth()
             configurePersonRoutes()
         }
 
-        return testHttpClient()
+        startApplication()
+
+        val pdlClient: PdlClient by application.dependencies
+        return pdlClient
     }
 
     @Test
-    fun `should get 404 when service throws not found`() = testApplication {
+    fun `should return null person is not found`() = testApplication {
         val client = configureRoutes()
-
         every { personService.getPerson("123") } throws PersonNotFoundException("Person not found")
 
-        val response = client.get("/api/person", { header("ident", "123") })
+        val response = client.getPerson("123")
 
-        response.status shouldEqual HttpStatusCode.NotFound
+        response shouldEqual null
     }
 
     @Test
-    fun `should get 409 when service throws too many persons`() = testApplication {
+    fun `should get unknown error when service throws too many persons`() = testApplication {
         val client = configureRoutes()
-
         every { personService.getPerson("123") } throws TooManyPersonException("Person not found")
 
-        val response = client.get("/api/person", { header("ident", "123") })
-
-        response.status shouldEqual HttpStatusCode.Conflict
+        shouldThrow<PdlClient.UnknownError> {
+            client.getPerson("123")
+        }
     }
 
     @Test
     fun `should get 200 when service returns person`() = testApplication {
         val client = configureRoutes()
-
         every { personService.getPerson("123") } returns
             Person(
                 navn = SimpleNavn("Fornavn", "Mellomnavn", "Etternavn"),
@@ -79,24 +87,10 @@ class PersonApiTest {
                 doed = false,
             )
 
-        val response =
-            client.get("/api/person") {
-                contentType(ContentType.Application.Json)
-                header("ident", "123")
-            }
+        val person = client.getPerson("123")
 
-        response.status shouldEqual HttpStatusCode.OK
-        val person = response.body<Person>()
-        person.navn?.fornavn shouldEqual "Fornavn"
-        person.foedselsdato shouldEqual LocalDate.of(1991, 1, 1)
-        person.identer.size shouldEqual 4
-    }
-}
-
-private fun ApplicationTestBuilder.testHttpClient(): HttpClient {
-    return createClient {
-        install(ContentNegotiation) {
-            jackson {}
-        }
+        person?.navn?.fornavn shouldEqual "Fornavn"
+        person?.foedselsdato shouldEqual LocalDate.of(1991, 1, 1)
+        person?.identer?.size shouldEqual 4
     }
 }
