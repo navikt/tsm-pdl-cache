@@ -26,7 +26,7 @@ data class HentPerson(
     val doedsfall: List<Doedsfall>,
 )
 
-data class PdlPerson(
+data class PdlPersonRecord(
     val hentPerson: HentPerson,
     val hentIdenter: HentIdenter,
 )

@@ -17,7 +17,7 @@ class KafkaPdlConsumer(
     val retryDelay: Duration,
 )
 
-class KafkaConfig(val config: Properties, val pdlConsumer: KafkaPdlConsumer)
+class KafkaConfig(val config: Properties)
 
 class PostgresConfig(
     val jdbc: String,
@@ -27,26 +27,17 @@ class PostgresConfig(
 
 class Environment(
     val runtime: Runtime,
-    val kafka: KafkaConfig,
+    val pdlConsumer: KafkaPdlConsumer,
     val postgres: PostgresConfig,
 )
 
 fun initializeEnvironment(config: ApplicationConfig): Environment {
-    val kafkaProperties =
-        KafkaConfig(
-            config =
-                Properties().apply {
-                    config.config("kafka.config").toMap().forEach { this[it.key] = it.value }
-                },
-            pdlConsumer =
-                KafkaPdlConsumer(
-                    longPoll = config.property("kafka.pdlConsumer.longPoll").getAs(),
-                    retryDelay = config.property("kafka.pdlConsumer.retryDelay").getAs(),
-                ),
-        )
-
     return Environment(
-        kafka = kafkaProperties,
+        pdlConsumer =
+            KafkaPdlConsumer(
+                longPoll = config.property("kafka.pdlConsumer.longPoll").getAs(),
+                retryDelay = config.property("kafka.pdlConsumer.retryDelay").getAs(),
+            ),
         runtime =
             Runtime(
                 env = getRuntimeCluster(),

@@ -13,7 +13,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer
 abstract class WithPostgresql {
     companion object {
         val postgres = PostgreSQLContainer("postgres:17-alpine").apply { start() }
-        val config = createIntegrationEnvironment(postgres, null)
+        val config = createIntegrationEnvironment(postgres)
 
         fun runMigrations(clean: Boolean = false) {
             val flyway =
