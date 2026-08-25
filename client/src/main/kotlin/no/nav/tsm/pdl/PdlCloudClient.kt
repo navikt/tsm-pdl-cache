@@ -13,16 +13,22 @@ import no.nav.tsm.ktor.auth.texas.Texas
 import no.nav.tsm.ktor.logger
 import no.nav.tsm.ktor.otel.failSpan
 
+class PdlCloudConfig(
+    val url: String = "http://tsm-pdl-cache",
+    val maxRetries: Int = 5,
+)
+
 class PdlCloudClient(
     httpClient: HttpClient,
     private val texasClient: Texas,
+    private val pdlCloudConfig: PdlCloudConfig = PdlCloudConfig(),
 ) : PdlClient {
-    private val url = "http://tsm-pdl-cache"
+    private val url = pdlCloudConfig.url
     private val logger = logger()
 
     private val pdlHttpClient = httpClient.config {
         install(HttpRequestRetry) {
-            retryOnServerErrors(maxRetries = 5)
+            retryOnServerErrors(maxRetries = pdlCloudConfig.maxRetries)
             exponentialDelay()
         }
         install(ContentNegotiation) {
@@ -35,12 +41,13 @@ class PdlCloudClient(
         val (token) = getToken()
 
         val response =
-            pdlHttpClient.get("$url/api/person") {
+            pdlHttpClient.post("$url/api/person") {
                 headers {
                     append("Nav-Consumer-Id", "syk-inn-api")
-                    append("Authorization", "Bearer $token")
-                    append("Ident", ident)
+                    bearerAuth(token)
                 }
+                contentType(ContentType.Application.Json)
+                setBody(PdlQuery(ident))
             }
 
         return when {
