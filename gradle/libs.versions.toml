@@ -5,7 +5,7 @@ flyway = "13.3.0"
 exposed = "1.4.0"
 postgres = "42.7.13"
 
-tsm-sykmeldinger-input = "29"
+tsm-sykmeldinger-input = "30"
 
 kotest-assertions = "6.2.4"
 mockk = "1.14.11"
