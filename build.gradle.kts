@@ -13,7 +13,7 @@ application {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(libs.versions.jvmVersion.get().toInt())
 }
 
 tasks {
