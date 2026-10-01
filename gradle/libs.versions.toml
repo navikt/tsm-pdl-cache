@@ -1,17 +1,17 @@
 [versions]
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 
-flyway = "13.3.0"
-exposed = "1.4.0"
+flyway = "13.7.0"
+exposed = "1.5.0"
 postgres = "42.7.13"
 
 tsm-sykmeldinger-input = "30"
 
-kotest-assertions = "6.2.4"
+kotest-assertions = "6.2.5"
 mockk = "1.14.11"
 testcontainers = "2.0.5"
 
-spotless = "8.10.0"
+spotless = "8.10.2"
 ktfmt = "0.64"
 
 jvmVersion = "25"
