@@ -14,6 +14,8 @@ testcontainers = "2.0.5"
 spotless = "8.10.0"
 ktfmt = "0.64"
 
+jvmVersion = "25"
+
 [libraries]
 # Database
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgres" }
