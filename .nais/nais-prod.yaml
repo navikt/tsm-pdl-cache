@@ -38,6 +38,9 @@ spec:
 
   liveness:
     path: /internal/health/alive
+    initialDelay: 30
+    periodSeconds: 5
+    failureThreshold: 30
   readiness:
     path: /internal/health/ready
   preStopHook:
