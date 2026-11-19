@@ -78,3 +78,4 @@ spec:
         - application: tsm-manuell-api
         - application: zara
         - application: tsm-behandlingsdager
+        - application: tsm-papirmottak
